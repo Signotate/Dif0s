@@ -16,7 +16,7 @@ def compute_full_size(palm_size):
     height += offset
 
     # draw table
-    surface = cairo.SVGSurface('all_the_palms.svg', width, height)
+    surface = cairo.SVGSurface(FILENAME, width, height)
     ctx = cairo.Context(surface)
     ctx.save()
 
