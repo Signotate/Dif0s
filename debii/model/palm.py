@@ -135,7 +135,7 @@ Duo = PalmPosition(Orientation.UP, Orientation.OUT)
 Ddi = PalmPosition(Orientation.DOWN, Orientation.IN)
 Ddo = PalmPosition(Orientation.DOWN, Orientation.OUT)
 Ddf = PalmPosition(Orientation.DOWN, Orientation.FORWARD)
-Ddb = PalmPosition(Orientation.DOWN, Orientation.DOWN)
+Ddb = PalmPosition(Orientation.DOWN, Orientation.BODY)
 
 
 # map each palm position to its base palm
@@ -143,13 +143,13 @@ BasePalmCtx = namedtuple('BasePalmCtx', 'palm mirror flip fill rotation')
 
 palm_contexts = {Dfu: BasePalmCtx(Dfu, False, False, False, None),
                  Dfd: BasePalmCtx(Dfu, False, False, False, math.pi),
-                 Dfi: BasePalmCtx(Dfu, False, False, False, -math.pi / 2.0),
-                 Dfo: BasePalmCtx(Dfu, False, False, False, math.pi / 2.0),
+                 Dfi: BasePalmCtx(Dfu, False, False, False, math.pi / 2.0),
+                 Dfo: BasePalmCtx(Dfu, False, False, False, -math.pi / 2.0),
 
-                 Dbu: BasePalmCtx(Dfu, False, False, True, None),
-                 Dbd: BasePalmCtx(Dfu, False, False, True, math.pi),
-                 Dbi: BasePalmCtx(Dfu, False, False, True, -math.pi / 2.0),
-                 Dbo: BasePalmCtx(Dfu, False, False, True, math.pi / 2.0),
+                 Dbu: BasePalmCtx(Dfu, True, False, True, None),
+                 Dbd: BasePalmCtx(Dfu, False, True, True, None),
+                 Dbi: BasePalmCtx(Dfu, False, True, True, math.pi / 2.0),
+                 Dbo: BasePalmCtx(Dfu, False, True, True, -math.pi / 2.0),
 
                  Dif: BasePalmCtx(Dif, False, False, False, None),
                  Dib: BasePalmCtx(Dif, False, True, False, None),
@@ -164,12 +164,12 @@ palm_contexts = {Dfu: BasePalmCtx(Dfu, False, False, False, None),
                  Duf: BasePalmCtx(Duf, False, False, False, None),
                  Dub: BasePalmCtx(Dub, False, False, False, None),
                  Dui: BasePalmCtx(Ddi, False, True, False, None),
-                 Duo: BasePalmCtx(Diu, False, False, False, math.pi / 2.0),
+                 Duo: BasePalmCtx(Diu, False, True, False, math.pi / 2.0),
 
                  Ddi: BasePalmCtx(Ddi, False, False, False, None),
-                 Ddo: BasePalmCtx(Diu, False, True, False, -math.pi / 2.0),
-                 Ddf: BasePalmCtx(Dif, False, False, True, -math.pi / 2.0),
-                 Ddb: BasePalmCtx(Dif, False, False, True, math.pi / 2.0)}
+                 Ddo: BasePalmCtx(Diu, False, False, False, -math.pi / 2.0),
+                 Ddf: BasePalmCtx(Dif, False, False, True, math.pi / 2.0),
+                 Ddb: BasePalmCtx(Dif, False, False, True, -math.pi / 2.0)}
 
 
 palm_ellipses = {Dfu: Ellipse(0.474492, 0.604754, 0.265738, 0.265738),
@@ -183,8 +183,8 @@ palm_ellipses = {Dfu: Ellipse(0.474492, 0.604754, 0.265738, 0.265738),
 palm_arcs = {Dif: FilledArc(0.343289, 0.611709, 0.159246, 0.297541,
                             math.pi / 2.0, 3 * math.pi / 2.0),
              Ddi: FilledArc(0.389967, 0.453508, 0.284361, 0.151049,
-                            0, math.pi),
-             Dui: FilledArc(0.471311, 0.659016, 0.161902, 0.302623,
+                            -math.pi, 0),
+             Diu: FilledArc(0.471311, 0.659016, 0.161902, 0.302623,
                             math.pi / 2.0, 3 * math.pi / 2.0)}
 
 
@@ -255,7 +255,7 @@ def draw_diu_palm(cairo_ctx, fill=False):
     cairo_ctx.stroke()
     cairo_ctx.set_source_rgb(1, 0, 0)
     cairo_ctx.move_to(1/2.0, 1/2.0)
-    cairo_ctx.line_to(1, 1/2.0)
+    cairo_ctx.line_to(0, 1/2.0)
     cairo_ctx.stroke()
 
     return cairo_ctx
