@@ -5,8 +5,7 @@ import numpy as np
 
 
 class CommonStrEnum(Enum):
-    def __str__(self):
-        return self.value
+    pass
 
 
 class Ellipse(object):
@@ -51,12 +50,13 @@ class Ellipse(object):
 
 
 class Line(object):
-    def __init__(self, x1, y1, x2, y2, width=0.02623):
+    def __init__(self, x1, y1, x2, y2, width=0.02623, color='black'):
         self.x1 = x1
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
         self.width = width
+        self.color = color
 
     def norm_vector(self):
         v = np.array([self.x2, self.y2]) - np.array([self.x1, self.y1])
@@ -71,7 +71,10 @@ class Line(object):
 
     def draw(self, ctx):
         ctx.save()
-        ctx.set_source_rgb(0, 0, 0)
+        if self.color == 'black':
+            ctx.set_source_rgb(0, 0, 0)
+        elif self.color == 'red':
+            ctx.set_source_rgb(1, 0, 0)
         ctx.set_line_width(self.width)
         ctx.move_to(self.x1, self.y1)
         ctx.line_to(self.x2, self.y2)
@@ -124,3 +127,17 @@ def flip_over_x(ctx, w, h):
     ctx.translate(w, 0)
     ctx.scale(-1, 1)
     return ctx
+
+
+def car2pol(v):
+    rho = np.linalg.norm(v)
+    phi = np.arctan2(v[1], v[0])
+
+    return rho, phi
+
+
+def pol2car(rho, phi):
+    x = rho * np.cos(phi)
+    y = rho * np.sin(phi)
+
+    return x, y
