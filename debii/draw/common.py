@@ -81,6 +81,20 @@ class Line(object):
         ctx.stroke()
         ctx.restore()
 
+    def scale(self, alpha):
+        dx = self.x2 - self.x1
+        dy = self.y2 - self.y1
+
+        return Line(self.x1,
+                    self.y1,
+                    self.x1 + alpha * dx,
+                    self.y1 + alpha * dy,
+                    width=self.width,
+                    color=self.color)
+
+    def __str__(self):
+        return '[(%f, %f), (%f, %f)]' % (self.x1, self.y1, self.x2, self.y2)
+
 
 class FilledArc(Ellipse):
     def __init__(self, cx, cy, rx, ry, start_radians, end_radians,
@@ -132,6 +146,10 @@ def flip_over_x(ctx, w, h):
 def car2pol(v):
     rho = np.linalg.norm(v)
     phi = np.arctan2(v[1], v[0])
+    if phi < 0:
+        phi += 2 * math.pi
+    if phi >= 2 * math.pi:
+        phi -= 2 * math.pi
 
     return rho, phi
 
