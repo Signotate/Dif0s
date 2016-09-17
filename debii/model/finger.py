@@ -1,6 +1,7 @@
 '''A simple model of a finger'''
 from enum import Enum
 from collections import namedtuple
+from functools import total_ordering
 
 
 class FingerProperty(Enum):
@@ -26,4 +27,32 @@ class FingerIndex(Enum):
     PINKY = 4
 
 
-Finger = namedtuple('Finger', ['index', 'property_list'])
+@total_ordering
+class Finger(object):
+    '''A finger with properties'''
+
+    def __init__(self, index=None, properties=[]):
+        self._index = index
+        self._properties = set(properties)
+
+    @property
+    def index(self):
+        return self._index
+
+    @property
+    def properties(self):
+        return self._properties
+
+    def __eq__(self):
+        if self.index != other.index:
+            return false
+        if self.properties != other.properties:
+            return false
+
+        return true
+
+    def __lt__(self, other):
+        if self.index < other.index:
+            return true
+        return (''.join(sorted([str(p.value) for p in self.properties])) <
+                   ''.join(sorted([str(p.value) for p in other.properties])))
