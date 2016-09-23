@@ -146,11 +146,6 @@ def flip_over_x(ctx, w, h):
 def car2pol(v):
     rho = np.linalg.norm(v)
     phi = np.arctan2(v[1], v[0])
-    if phi < 0:
-        phi += 2 * math.pi
-    if phi >= 2 * math.pi:
-        phi -= 2 * math.pi
-
     return rho, phi
 
 
@@ -159,3 +154,11 @@ def pol2car(rho, phi):
     y = rho * np.sin(phi)
 
     return x, y
+
+
+def norm_angle(phi):
+    while phi < 0:
+        phi += 2 * math.pi
+    while phi >= 2 * math.pi:
+        phi -= 2 * math.pi
+    return phi
