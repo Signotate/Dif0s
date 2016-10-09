@@ -162,3 +162,26 @@ def norm_angle(phi):
     while phi >= 2 * math.pi:
         phi -= 2 * math.pi
     return phi
+
+
+def orient_phis(p_finger, p_thumb):
+    p_finger = norm_angle(p_finger)
+    p_thumb = norm_angle(p_thumb)
+
+    if equal_with_tol(p_finger, 0.0):
+        p_finger += 2 * math.pi
+    if equal_with_tol(p_thumb, 0.0):
+        p_thumb += 2 * math.pi
+
+    while p_thumb > p_finger and abs(p_thumb - p_finger) > math.pi / 2.0:
+        p_thumb -= 2 * math.pi
+    while p_thumb < p_finger and abs(p_thumb - p_finger) > math.pi / 2.0:
+        p_finger -= 2 * math.pi
+
+    return p_finger, p_thumb
+
+
+def equal_with_tol(a, b, tol=0.001):
+    if abs(b - a) <= 0.001:
+        return True
+    return False

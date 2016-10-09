@@ -15,6 +15,7 @@ class FingerProperty(Enum):
     TAPER = 5
     CONTACT = 6
     X = 7
+    TOGETHER = 8
 
 
 class FingerIndex(Enum):
