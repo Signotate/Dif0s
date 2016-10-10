@@ -4,7 +4,7 @@ from ...model.palm import parse_palm
 from ...draw import draw_palm2
 from ...draw import draw_orient_vectors2
 from ...draw import draw_orient_thumb
-from ...draw import draw_test_fingers
+from ...draw import draw_test_fingers2
 #from ...draw import draw_demo_fingers
 
 if __name__ == "__main__":
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     draw_palm2(p, ctx)
     #draw_orient_thumb(p, ctx)
     draw_orient_vectors2(p, ctx)
-    #draw_test_fingers(p, ctx)
+    draw_test_fingers2(p, ctx)
     #draw_demo_fingers(p, ctx)
 
     ctx.show_page()

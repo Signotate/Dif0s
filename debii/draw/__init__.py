@@ -96,6 +96,36 @@ def draw_orient_vectors2(palm, ctx):
     Line(0.0, 0.0, float(v_thumb[0]), float(-v_thumb[1]), color='red').draw(ctx)
 
 
+def draw_test_fingers2(palm, ctx):
+    palm_cfg = palm_config.cfg(palm.palm_dir, palm.finger_dir)
+    if not palm.dominant:
+        palm_cfg = palm_config.mirror_palm_config(palm_cfg)
+    v_finger, v_thumb, fill, v_fill_arc, transforms = palm_cfg
+
+    v_starts = []
+    for v in palm_config.BASE_ANCHORS[palm_config.FINGER_STARTS]:
+        for trans in transforms:
+            v = trans.dot(v)
+
+        v = np.array([[1.0, 0.0],
+                      [0.0, -1.0]]).dot(v)
+
+        v_starts.append(v)
+
+    v_ends = []
+    for v in palm_config.BASE_ANCHORS[palm_config.SPLAY_ENDS]:
+        for trans in transforms:
+            v = trans.dot(v)
+
+        v = np.array([[1.0, 0.0],
+                      [0.0, -1.0]]).dot(v)
+
+        v_ends.append(v)
+
+    for v, u in zip(v_starts, v_ends):
+        Line(v[0], v[1], u[0], u[1]).draw(ctx)
+
+
 def draw_orient_vectors(palm, ctx):
     palm_cfg = hand_config.palm_config(palm.palm_dir, palm.finger_dir)
     if not palm.dominant:

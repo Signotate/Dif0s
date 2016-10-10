@@ -3,8 +3,8 @@ from .common import angle_between
 from .common import directed_angle
 from .common import scale_matrix
 from .common import rotation_matrix
-from .common import directed_angle
 from .common import is_counter_clockwise
+from .common import pol2car
 import numpy as np
 import math
 from collections import namedtuple
@@ -84,12 +84,38 @@ PALM_CONFIGS[(DOWN, FORWARD)] = (SOUTH, EAST, True, None, PALM_MINOR_RADIUS)
 PALM_CONFIGS[(DOWN, BODY)] = (NORTH, WEST, True, None, PALM_MINOR_RADIUS)
 
 
-'''Generate palm configs'''
+'''A Palm Configuration'''
 _PalmConfig = namedtuple('_PalmConfig', ['v_finger',
                                          'v_thumb',
                                          'fill',
                                          'v_filled_arc',
                                          'transforms'])
+
+
+
+
+'''
+Palm Anchors for Dfu palm config. These anchors will be transformed for use
+with all palm configurations
+'''
+FINGER_STARTS = 'finger_starts'
+SPLAY_ENDS = 'splay_ends'
+STRAIGHT_ENDS = 'straight_ends'
+FOLDED_STARTS = 'folded_starts'
+FOLDED_ENDS = 'folded_ends'
+FOLDED_START_RADIUS = PALM_CIRCLE_RADIUS * 0.9
+FOLDED_END_RADIUS = PALM_CIRCLE_RADIUS * 1.1
+FINGER_SCALES = [1.0, 0.85, 1.0, 0.85, 0.7]
+FINGER_START_PHIS = [5.39307, 0.76794, 1.34390, 1.90241, 2.44346]
+SPLAY_END_PHIS = [6.15228, 0.87266, 1.32645, 1.88495, 2.43473]
+SPLAY_LENGTHS = [HAND_CIRCLE_RADIUS * a for a in FINGER_SCALES]
+
+
+BASE_ANCHORS = {}
+BASE_ANCHORS[FINGER_STARTS] = [np.array(pol2car(PALM_CIRCLE_RADIUS, t)) for t
+                               in FINGER_START_PHIS]
+BASE_ANCHORS[SPLAY_ENDS] = [np.array(pol2car(r, t)) for r, t in
+                            zip(SPLAY_LENGTHS, SPLAY_END_PHIS)]
 
 
 #ROTATIONS = {(NORTH, EAST) : 0.0,
@@ -140,14 +166,12 @@ def gen_palm_config(p_config):
     transforms = []
 
     if should_mirror(v_finger, v_thumb):
-        #transforms.append(scale_matrix(-1.0, 1.0))
-        transforms.append(True)
+        transforms.append(scale_matrix(-1.0, 1.0))
     else:
-        transforms.append(False)
+        transforms.append(scale_matrix(1.0, 1.0))
 
-    #transforms.append(rotation_matrix(finger_rotation(v_finger, v_thumb)))
-    transforms.append(finger_rotation(v_finger, NORTH))
-    #transforms.append(get_palm_scale_matrix(v_finger, v_thumb))
+    transforms.append(get_palm_scale_matrix(v_f, v_t))
+    transforms.append(rotation_matrix(finger_rotation(NORTH, v_finger)))
 
     return _PalmConfig(v_f, v_t, fill, v_a, transforms)
 
@@ -155,6 +179,8 @@ def gen_palm_config(p_config):
 def get_palm_scale_matrix(v_f, v_t):
     rx = abs(v_f[0] + v_t[0])
     ry = abs(v_f[1] + v_t[1])
+    print('RX:', rx)
+    print('RY:', ry)
 
     return np.array([[rx / PALM_CIRCLE_RADIUS, 0.0,],
                      [0.0, ry / PALM_CIRCLE_RADIUS]])
@@ -176,20 +202,22 @@ def mirror_palm_config(cfg):
     if cfg.v_filled_arc is not None:
         v_arc = mirror.dot(cfg.v_filled_arc)
 
+    transforms = list(cfg.transforms)
+    transforms[0] = mirror.dot(transforms[0])
+    transforms[2] = transforms[2].T
+
     return _PalmConfig(mirror.dot(cfg.v_finger),
                        mirror.dot(cfg.v_thumb),
                        cfg.fill,
                        v_arc,
-                       [mirror] + cfg.transforms)
+                       transforms)
 
-
+'''The generated palm_configs'''
 _palm_configs = gen_palm_configs()
-
-
 def cfg(o_finger, o_thumb):
     return _palm_configs[(o_finger, o_thumb)]
 
 
-if __name__ == '__main__':
-    for k, c in _palm_configs.items():
-        print(k, '=>', c)
+#if __name__ == '__main__':
+    #for k, c in _palm_configs.items():
+        ##print(k, '=>', c)
