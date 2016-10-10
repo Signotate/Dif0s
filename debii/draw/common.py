@@ -75,6 +75,8 @@ class Line(object):
             ctx.set_source_rgb(0, 0, 0)
         elif self.color == 'red':
             ctx.set_source_rgb(1, 0, 0)
+        elif self.color == 'green':
+            ctx.set_source_rgb(0, 1, 0)
         ctx.set_line_width(self.width)
         ctx.move_to(self.x1, self.y1)
         ctx.line_to(self.x2, self.y2)
@@ -185,3 +187,33 @@ def equal_with_tol(a, b, tol=0.001):
     if abs(b - a) <= 0.001:
         return True
     return False
+
+
+def unit_vector(v):
+    return v / np.linalg.norm(v)
+
+
+def angle_between(v1, v2):
+    unit_v1 = unit_vector(v1)
+    unit_v2 = unit_vector(v2)
+
+    return np.arccos(np.clip(np.dot(unit_v1, unit_v2), -1.0, 1.0))
+
+
+def directed_angle(v1, v2):
+    return math.atan2(v2[1], v2[0]) - math.atan2(v1[1], v1[0])
+
+
+def is_counter_clockwise(v2, v1):
+    r = np.cross(v2, v1)
+    return (r < 0)
+
+
+def rotation_matrix(theta):
+    return np.array([[math.cos(theta), -math.sin(theta)],
+                     [math.sin(theta), math.cos(theta)]])
+
+
+def scale_matrix(scale_x, scale_y):
+    return np.array([[float(scale_x), 0.0],
+                     [0.0, float(scale_y)]])

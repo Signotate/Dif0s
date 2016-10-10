@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from . import hand_config
+from . import palm_config
 from .common import Ellipse
 from .common import FilledArc
 from .common import Line
@@ -47,6 +48,52 @@ def draw_palm(palm, ctx):
 
         FilledArc(0.0, 0.0, float(abs(rx)), float(abs(ry)), start_angle,
                   end_angle).draw(ctx)
+
+
+def draw_palm2(palm, ctx):
+    palm_cfg = palm_config.cfg(palm.palm_dir, palm.finger_dir)
+    if not palm.dominant:
+        palm_cfg = palm_config.mirror_palm_config(palm_cfg)
+    print(palm_cfg)
+    v_finger, v_thumb, fill, v_fill_arc, _ = palm_cfg
+
+    rx = v_finger[0] + v_thumb[0]
+    ry = v_finger[1] + v_thumb[1]
+
+    Ellipse(0.0, 0.0, float(rx), float(ry), fill).draw(ctx)
+
+    if v_fill_arc is not None:
+        rho, phi = car2pol(np.array([v_fill_arc[0], v_fill_arc[1]]))
+        phi = norm_angle(phi)
+        print("norm arc phi:", phi)
+        if equal_with_tol(phi, 0.0):
+            phi += 2 * math.pi
+        start_angle = phi - math.pi / 2.0
+        end_angle = phi + math.pi / 2.0
+        #if equal_with_tol(end_angle, 0.0):
+            #end_angle += 2 * math.pi
+        #print("arc:", start_angle / math.pi, end_angle / math.pi)
+        #if ((start_angle < 0 or end_angle < 0) and
+                #(start_angle >= 0 or end_angle >= 0)):
+
+        if start_angle == math.pi or start_angle == 2 * math.pi:
+            start_angle, end_angle = end_angle, start_angle
+        if v_fill_arc[0] == 0.0 and v_fill_arc[1] > 0.0:
+            start_angle, end_angle = -math.pi, 0.0
+
+        print("arc angles:", start_angle / math.pi, end_angle / math.pi)
+
+        FilledArc(0.0, 0.0, float(abs(rx)), float(abs(ry)), start_angle,
+                  end_angle).draw(ctx)
+
+
+def draw_orient_vectors2(palm, ctx):
+    palm_cfg = palm_config.cfg(palm.palm_dir, palm.finger_dir)
+    if not palm.dominant:
+        palm_cfg = palm_config.mirror_palm_config(palm_cfg)
+    v_finger, v_thumb, fill, v_fill_arc, _ = palm_cfg
+    Line(0.0, 0.0, float(v_finger[0]), float(-v_finger[1]), color='green').draw(ctx)
+    Line(0.0, 0.0, float(v_thumb[0]), float(-v_thumb[1]), color='red').draw(ctx)
 
 
 def draw_orient_vectors(palm, ctx):

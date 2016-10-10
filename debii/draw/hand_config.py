@@ -52,7 +52,7 @@ _PalmConfig = namedtuple('_PalmConfig', ['finger_vector', 'thumb_vector',
 
 
 '''dictionary of palms and there basic configuration'''
-palm_configs = {(__FORWARD, __UP): _PalmConfig((0.0, circle_radius),
+old_palm_configs = {(__FORWARD, __UP): _PalmConfig((0.0, circle_radius),
                                                (circle_radius, 0.0),
                                                False,
                                                None),
