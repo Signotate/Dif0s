@@ -72,9 +72,10 @@ def draw_test_fingers(palm, ctx):
                       [0.0, -1.0]]).dot(v)
 
         v_starts.append(v)
+    v_starts[0] = anchors.BASE_ANCHORS[anchors.STRAIGHT_THUMB_START]
 
     v_ends = []
-    for v in anchors.BASE_ANCHORS[anchors.SPLAY_ENDS]:
+    for v in anchors.BASE_ANCHORS[anchors.STRAIGHT_ENDS]:
         for trans in transforms:
             v = trans.dot(v)
 

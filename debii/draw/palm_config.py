@@ -178,18 +178,26 @@ class PalmAnchors(object):
     STRAIGHT_ENDS = 'straight_ends'
     FOLDED_STARTS = 'folded_starts'
     FOLDED_ENDS = 'folded_ends'
+    STRAIGHT_THUMB_START = 'straight_thumb_start'
     FOLDED_START_RADIUS = PALM_CIRCLE_RADIUS * 0.9
     FOLDED_END_RADIUS = PALM_CIRCLE_RADIUS * 1.1
     FINGER_SCALES = [1.0, 0.85, 1.0, 0.85, 0.7]
     FINGER_START_PHIS = [5.39307, 0.76794, 1.34390, 1.90241, 2.44346]
     SPLAY_END_PHIS = [6.15228, 0.87266, 1.32645, 1.88495, 2.43473]
-    SPLAY_LENGTHS = [HAND_CIRCLE_RADIUS * a for a in FINGER_SCALES]
+    FINGER_LENGTHS = [HAND_CIRCLE_RADIUS * a for a in FINGER_SCALES]
 
     BASE_ANCHORS = {}
     BASE_ANCHORS[FINGER_STARTS] = [np.array(pol2car(PALM_CIRCLE_RADIUS, t))
                                    for t in FINGER_START_PHIS]
     BASE_ANCHORS[SPLAY_ENDS] = [np.array(pol2car(r, t)) for r, t in
-                                zip(SPLAY_LENGTHS, SPLAY_END_PHIS)]
+                                zip(FINGER_LENGTHS, SPLAY_END_PHIS)]
+    BASE_ANCHORS[STRAIGHT_ENDS] = []
+    for s, l in zip(BASE_ANCHORS[FINGER_STARTS], FINGER_LENGTHS):
+        BASE_ANCHORS[STRAIGHT_ENDS].append(np.array([s[0], l]))
+
+    BASE_ANCHORS[STRAIGHT_ENDS][0] = np.array([PALM_CIRCLE_RADIUS + 0.08, 0.3])
+    BASE_ANCHORS[STRAIGHT_THUMB_START] = np.array(
+        pol2car(PALM_CIRCLE_RADIUS, 2 * math.pi))
 
     def __init__(self):
         super().__init__()
