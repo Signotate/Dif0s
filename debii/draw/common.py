@@ -51,11 +51,11 @@ class Ellipse(object):
 
 class Line(object):
     def __init__(self, x1, y1, x2, y2, width=0.02623, color='black'):
-        self.x1 = x1
-        self.y1 = y1
-        self.x2 = x2
-        self.y2 = y2
-        self.width = width
+        self.x1 = float(x1)
+        self.y1 = float(y1)
+        self.x2 = float(x2)
+        self.y2 = float(y2)
+        self.width = float(width)
         self.color = color
 
     def norm_vector(self):

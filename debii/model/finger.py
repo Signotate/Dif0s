@@ -1,21 +1,22 @@
 '''A simple model of a finger'''
 from enum import Enum
 from collections import namedtuple
-from functools import total_ordering
 
 
 class FingerProperty(Enum):
-    '''A finger property'''
+    '''
+    A property defining of a finger position or shape.
+    '''
 
-    STRAIGHT = 0
-    FOLDED = 1
-    SPREAD = 2
-    BENT = 3
-    ROUND = 4
-    TAPER = 5
-    CONTACT = 6
-    X = 7
-    TOGETHER = 8
+    STRAIGHT = '+'
+    FOLDED = '-'
+    SPREAD = 's'
+    BENT = 'b'
+    ROUND = 'r'
+    TAPER = 't'
+    CONTACT = 'c'
+    X = 'x'
+    TOGETHER = ''
 
 
 class FingerIndex(Enum):
@@ -28,7 +29,6 @@ class FingerIndex(Enum):
     PINKY = 4
 
 
-@total_ordering
 class Finger(object):
     '''A finger with properties'''
 
@@ -51,9 +51,3 @@ class Finger(object):
             return false
 
         return true
-
-    def __lt__(self, other):
-        if self.index < other.index:
-            return true
-        return (''.join(sorted([str(p.value) for p in self.properties])) <
-                   ''.join(sorted([str(p.value) for p in other.properties])))

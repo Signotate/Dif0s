@@ -14,4 +14,4 @@ class Hand(object):
 
     @property
     def fingers(self):
-        return self.fingers
+        return self._fingers

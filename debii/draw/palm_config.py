@@ -1,10 +1,14 @@
 from ..model.palm import Orientation
+from ..model.finger import FingerProperty
+from ..model.finger import FingerIndex
 from .common import angle_between
 from .common import directed_angle
 from .common import scale_matrix
 from .common import rotation_matrix
 from .common import is_counter_clockwise
 from .common import pol2car
+from .common import Line
+from .common import Ellipse
 import numpy as np
 import math
 from collections import namedtuple
@@ -169,16 +173,23 @@ class PalmConfigs:
 
 
 '''
-Palm Anchors for Dfu palm config. These anchors will be transformed for use
-with all palm configurations
+Access shapes for a single finger, based on a palm_config
+
+Configuration is bases on a set of vectors (anchors) with define finger shapes
+for the Dfu palm config.  The vectors can be transformed to be used every
+palm configuration.
 '''
-class PalmAnchors(object):
-    FINGER_STARTS = 'finger_starts'
-    SPLAY_ENDS = 'splay_ends'
-    STRAIGHT_ENDS = 'straight_ends'
-    FOLDED_STARTS = 'folded_starts'
-    FOLDED_ENDS = 'folded_ends'
-    STRAIGHT_THUMB_START = 'straight_thumb_start'
+class FingerShapes(object):
+    P_STRA = FingerProperty.STRAIGHT
+    P_SPRE = FingerProperty.SPREAD
+    P_ROUN = FingerProperty.ROUND
+    P_BEND = FingerProperty.BENT
+    P_FOLD = FingerProperty.FOLDED
+    P_CONT = FingerProperty.CONTACT
+    P_TAPE = FingerProperty.TAPER
+    P_X    = FingerProperty.X
+    P_TOGE = FingerProperty.TOGETHER
+    
     FOLDED_START_RADIUS = PALM_CIRCLE_RADIUS * 0.9
     FOLDED_END_RADIUS = PALM_CIRCLE_RADIUS * 1.1
     FINGER_SCALES = [1.0, 0.85, 1.0, 0.85, 0.7]
@@ -186,44 +197,51 @@ class PalmAnchors(object):
     SPLAY_END_PHIS = [6.15228, 0.87266, 1.32645, 1.88495, 2.43473]
     FINGER_LENGTHS = [HAND_CIRCLE_RADIUS * a for a in FINGER_SCALES]
 
-    BASE_ANCHORS = {}
-    BASE_ANCHORS[FINGER_STARTS] = [np.array(pol2car(PALM_CIRCLE_RADIUS, t))
-                                   for t in FINGER_START_PHIS]
-    BASE_ANCHORS[SPLAY_ENDS] = [np.array(pol2car(r, t)) for r, t in
-                                zip(FINGER_LENGTHS, SPLAY_END_PHIS)]
-    BASE_ANCHORS[STRAIGHT_ENDS] = []
-    for s, l in zip(BASE_ANCHORS[FINGER_STARTS], FINGER_LENGTHS):
-        BASE_ANCHORS[STRAIGHT_ENDS].append(np.array([s[0], l]))
+    FINGER_STARTS = [np.array(pol2car(PALM_CIRCLE_RADIUS, t))
+                     for t in FINGER_START_PHIS]
+    SPLAY_ENDS = [np.array(pol2car(r, t))
+                  for r, t in zip(FINGER_LENGTHS, SPLAY_END_PHIS)]
+    STRAIGHT_ENDS = []
+    for s, l in zip(FINGER_STARTS, FINGER_LENGTHS):
+        STRAIGHT_ENDS.append(np.array([s[0], l]))
 
-    BASE_ANCHORS[STRAIGHT_ENDS][0] = np.array([PALM_CIRCLE_RADIUS + 0.08, 0.3])
-    BASE_ANCHORS[STRAIGHT_THUMB_START] = np.array(
-        pol2car(PALM_CIRCLE_RADIUS, 2 * math.pi))
+    STRAIGHT_ENDS[0] = np.array([PALM_CIRCLE_RADIUS + 0.08, 0.3])
+    STRAIGHT_THUMB_START = np.array(pol2car(PALM_CIRCLE_RADIUS, 2 * math.pi))
 
     def __init__(self):
         super().__init__()
 
+    def shapes_for(self, finger, palm_cfg):
+        index, features = finger.index, finger.properties
+        if set([self.P_STRA]) == finger.properties:
+            start = self.FINGER_STARTS[index.value]
+            if index == FingerIndex.THUMB:
+                start = self.STRAIGHT_THUMB_START
+            end = self.STRAIGHT_ENDS[index.value]
+            start, end = self.transform_anchors([start, end], palm_cfg)
+            return Line(start[0], start[1], end[0], end[1])
 
-#ROTATIONS = {(NORTH, EAST) : 0.0,
-             #(NORTH, WEST) : 0.0,
-             #(SOUTH, EAST) : math.pi,
-             #(SOUTH, WEST) : math.pi,
-             #(EAST, NORTH) : -math.pi / 2.0,
-             #(EAST, SOUTH) : -math.pi / 2.0,
-             #(WEST, NORTH) : math.pi / 2.0,
-             #(WEST, SOUTH) : math.pi / 2.0
-            #}
+        elif set([self.P_SPRE]) == finger.properties:
+            start = self.FINGER_STARTS[index.value]
+            end = self.SPLAY_ENDS[index.value]
+            start, end = self.transform_anchors([start, end], palm_cfg)
+            return Line(start[0], start[1], end[0], end[1])
 
-
-#MIRROR = {(NORTH, EAST) : False,
-          #(NORTH, WEST) : True,
-          #(SOUTH, EAST) : True,
-          #(SOUTH, WEST) : False,
-          #(EAST, NORTH) : True,
-          #(EAST, SOUTH) : False,
-          #(WEST, NORTH) : False,
-          #(WEST, SOUTH) : True
-         #}
+    def transform_anchors(self, anchors, palm_config):
+        anchors_prime = []
+        for a in anchors:
+            a_p = np.array([a[0], a[1]])
+            mirror = palm_config.transforms[0]
+            scale  = palm_config.transforms[1]
+            rotate = palm_config.transforms[2]
+            a_p = mirror.dot(a_p)
+            a_p = rotate.dot(a_p)
+            a_p = scale.dot(a_p)
+            a_p = np.array([[1.0, 0.0],
+                            [0.0, -1.0]]).dot(a_p)
+            anchors_prime.append(a_p)
+        return anchors_prime
 
 
 palm_cfg = PalmConfigs()
-anchors = PalmAnchors()
+finger_shapes = FingerShapes()

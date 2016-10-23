@@ -3,7 +3,7 @@ import cairo
 from ...model.palm import parse_palm
 from ...draw import draw_palm
 from ...draw import draw_orient_vectors
-from ...draw import draw_test_fingers
+from ...draw import draw_fingers
 
 if __name__ == "__main__":
     p = parse_palm(sys.argv[1])
@@ -17,6 +17,6 @@ if __name__ == "__main__":
 
     draw_palm(p, ctx)
     draw_orient_vectors(p, ctx)
-    draw_test_fingers(p, ctx)
+    draw_fingers(p, ctx)
 
     ctx.show_page()
