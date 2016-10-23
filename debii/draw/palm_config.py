@@ -12,6 +12,10 @@ from .common import Ellipse
 import numpy as np
 import math
 from collections import namedtuple
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 HAND_MAJOR_RADIUS = 1.0

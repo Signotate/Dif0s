@@ -12,6 +12,7 @@ from ...draw import draw_orient_vectors
 from ...draw import draw_fingers
 from ...draw import draw_hand
 from ...draw.common import Line
+from ...util import setup_logging
 
 
 def draw_grid(ctx, total_size, cell_size, props):
@@ -87,6 +88,8 @@ def draw_grid(ctx, total_size, cell_size, props):
 
 
 if __name__ == "__main__":
+    setup_logging()
+
     surface = cairo.SVGSurface('build_test.svg', 1400, 700)
     ctx = cairo.Context(surface)
     draw_grid(ctx, (1400, 700), (200, 100), [FingerProperty.STRAIGHT,

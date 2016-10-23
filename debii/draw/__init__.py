@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import logging
 from .palm_config import palm_cfg
 from .palm_config import finger_shapes
 from .common import Ellipse
@@ -14,11 +15,14 @@ from ..model.finger import FingerProperty
 from ..model.finger import Finger
 
 
+logger = logging.getLogger(__name__)
+
+
 def draw_palm(palm, ctx):
     cfg = palm_cfg(palm.palm_dir, palm.finger_dir)
     if not palm.dominant:
         cfg = palm_cfg.mirror_palm_config(cfg)
-    #print(cfg)
+    logger.debug('Drawing palm config: ' + str(cfg))
     v_finger, v_thumb, fill, v_fill_arc, _ = cfg
 
     rx = v_finger[0] + v_thumb[0]
@@ -29,7 +33,7 @@ def draw_palm(palm, ctx):
     if v_fill_arc is not None:
         rho, phi = car2pol(np.array([v_fill_arc[0], v_fill_arc[1]]))
         phi = norm_angle(phi)
-        #print("norm arc phi:", phi)
+        logger.debug('Drawing Palm: norm arc angle: ' + str(phi))
         if equal_with_tol(phi, 0.0):
             phi += 2 * math.pi
         start_angle = phi - math.pi / 2.0
@@ -40,7 +44,9 @@ def draw_palm(palm, ctx):
         if v_fill_arc[0] == 0.0 and v_fill_arc[1] > 0.0:
             start_angle, end_angle = -math.pi, 0.0
 
-        #print("arc angles:", start_angle / math.pi, end_angle / math.pi)
+        logger.debug("Drawing Palm: arc angles:" +
+                     str(start_angle / math.pi) + ', ' +
+                     str(end_angle / math.pi))
 
         FilledArc(0.0, 0.0, float(abs(rx)), float(abs(ry)), start_angle,
                   end_angle).draw(ctx)
