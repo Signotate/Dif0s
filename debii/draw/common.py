@@ -77,6 +77,8 @@ class Line(object):
             ctx.set_source_rgb(1, 0, 0)
         elif self.color == 'green':
             ctx.set_source_rgb(0, 1, 0)
+        elif self.color == 'white':
+            ctx.set_source_rgb(1, 1, 1)
         ctx.set_line_width(self.width)
         ctx.move_to(self.x1, self.y1)
         ctx.line_to(self.x2, self.y2)
