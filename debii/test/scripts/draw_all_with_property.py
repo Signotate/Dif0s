@@ -13,9 +13,14 @@ from ...draw import draw_fingers
 from ...draw import draw_hand
 from ...draw.common import Line
 from ...util import setup_logging
+from .finger_sets import finger_sets
+import logging
 
 
-def draw_grid(ctx, total_size, cell_size, props):
+logger = logging.getLogger(__name__)
+
+
+def draw_grid(ctx, total_size, cell_size, fingers):
     labels_x = ['', 'F Up', 'F Down', 'F In', 'F Out', 'F Forward', 'F Body']
     labels_y = ['', 'P Forward', 'P Body', 'P In', 'P Out', 'P Up', 'P Down']
 
@@ -37,21 +42,25 @@ def draw_grid(ctx, total_size, cell_size, props):
 
     ctx.save()
     for l, x in zip(labels_x, range(0, total_size[0], cell_size[0])):
-        Line(x, 0, x, total_size[1], width=2.0).draw(ctx)
+        line = Line(x, 0, x, total_size[1], width=2.0)
+        logger.debug('Drawing grid line: ' + str(line))
+        line.draw(ctx)
         ctx.move_to(x + 10, cell_size[1] / 2.0)
         ctx.set_font_size(16)
         ctx.show_text(l)
         ctx.stroke()
+    Line(total_size[0], 0, total_size[0], total_size[1], width=2.0).draw(ctx)
     for l, y in zip(labels_y, range(0, total_size[1], cell_size[1])):
-        Line(0, y, total_size[0], y, width=2.0).draw(ctx)
+        line = Line(0, y, total_size[0], y, width=2.0)
+        logger.debug('Drawing grid line: ' + str(line))
+        line.draw(ctx)
         ctx.move_to(10, y + cell_size[1] / 2.0)
         ctx.set_font_size(16)
         ctx.show_text(l)
         ctx.stroke()
+    Line(0, total_size[1], total_size[0], total_size[1], width=2.0).draw(ctx)
     
     ctx.restore()
-
-    fingers = [Finger(index, props) for index in list(FingerIndex)]
 
     for o_finger, x in zip(finger_orients, range(0, total_size[0], cell_size[0])):
         for o_palm, y in zip(palm_orients, 
@@ -90,8 +99,9 @@ def draw_grid(ctx, total_size, cell_size, props):
 if __name__ == "__main__":
     setup_logging()
 
-    surface = cairo.SVGSurface('build_test.svg', 1400, 700)
-    ctx = cairo.Context(surface)
-    draw_grid(ctx, (1400, 700), (200, 100), [FingerProperty.STRAIGHT,
-                                             FingerProperty.SPREAD])
-    ctx.show_page()
+    for finger_set in finger_sets:
+        f = 'pf_orients_' + finger_set[0] + '.svg'
+        surface = cairo.SVGSurface(f, 1400, 700)
+        ctx = cairo.Context(surface)
+        draw_grid(ctx, (1400, 700), (200, 100), finger_set[1])
+        ctx.show_page()
