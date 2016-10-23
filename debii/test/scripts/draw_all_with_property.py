@@ -89,5 +89,6 @@ def draw_grid(ctx, total_size, cell_size, props):
 if __name__ == "__main__":
     surface = cairo.SVGSurface('build_test.svg', 1400, 700)
     ctx = cairo.Context(surface)
-    draw_grid(ctx, (1400, 700), (200, 100), [FingerProperty.STRAIGHT])
+    draw_grid(ctx, (1400, 700), (200, 100), [FingerProperty.STRAIGHT,
+                                             FingerProperty.SPREAD])
     ctx.show_page()

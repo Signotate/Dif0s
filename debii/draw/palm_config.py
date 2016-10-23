@@ -213,7 +213,7 @@ class FingerShapes(object):
 
     def shapes_for(self, finger, palm_cfg):
         index, features = finger.index, finger.properties
-        if set([self.P_STRA]) == finger.properties:
+        if set([self.P_STRA, self.P_TOGE]) == finger.properties:
             start = self.FINGER_STARTS[index.value]
             if index == FingerIndex.THUMB:
                 start = self.STRAIGHT_THUMB_START
@@ -221,7 +221,7 @@ class FingerShapes(object):
             start, end = self.transform_anchors([start, end], palm_cfg)
             return Line(start[0], start[1], end[0], end[1])
 
-        elif set([self.P_SPRE]) == finger.properties:
+        elif set([self.P_STRA, self.P_SPRE]) == finger.properties:
             start = self.FINGER_STARTS[index.value]
             end = self.SPLAY_ENDS[index.value]
             start, end = self.transform_anchors([start, end], palm_cfg)
