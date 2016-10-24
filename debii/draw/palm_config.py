@@ -6,8 +6,11 @@ from .common import scale_matrix
 from .common import rotation_matrix
 from .common import is_counter_clockwise
 from .common import pol2car
+from .common import car2pol
+from .common import norm_angle
 from .common import Line
 from .common import Ellipse
+from .common import FilledArc
 import numpy as np
 import math
 from collections import namedtuple
@@ -173,6 +176,47 @@ class PalmConfigs:
                                 cfg.fill,
                                 v_arc,
                                 transforms)
+
+    def shapes_for(self, palm):
+        cfg = self(palm.palm_dir, palm.finger_dir)
+        if not palm.dominant:
+            cfg = palm_cfg.mirror_palm_config(cfg)
+        logger.debug('Getting shapes for: ' + str(cfg))
+        v_finger, v_thumb, fill, v_fill_arc, _ = cfg
+
+        rx = v_finger[0] + v_thumb[0]
+        ry = v_finger[1] + v_thumb[1]
+
+        palm_shapes = []
+        palm_shapes.append(Ellipse(0.0, 0.0, float(rx), float(ry), fill))
+
+        if v_fill_arc is not None:
+            rho, phi = car2pol(np.array([v_fill_arc[0], v_fill_arc[1]]))
+            phi = norm_angle(phi)
+            logger.debug('Getting half filled arc with phi: ' + str(phi))
+            if np.isclose(phi, 0.0):
+                phi += 2 * math.pi
+            start_angle = phi - math.pi / 2.0
+            end_angle = phi + math.pi / 2.0
+
+            if start_angle == math.pi or start_angle == 2 * math.pi:
+                start_angle, end_angle = end_angle, start_angle
+            if v_fill_arc[0] == 0.0 and v_fill_arc[1] > 0.0:
+                start_angle, end_angle = -math.pi, 0.0
+
+            logger.debug("Filled arc angles:" +
+                         str(start_angle / math.pi) + ', ' +
+                         str(end_angle / math.pi))
+
+            palm_shapes.append(
+                FilledArc(0.0,
+                          0.0,
+                          float(abs(rx)),
+                          float(abs(ry)),
+                          start_angle,
+                          end_angle))
+
+        return palm_shapes
 
 
 '''
