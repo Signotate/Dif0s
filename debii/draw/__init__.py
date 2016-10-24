@@ -9,7 +9,6 @@ from .common import Line
 from .common import car2pol
 from .common import pol2car
 from .common import norm_angle
-from .common import equal_with_tol
 from ..model.finger import FingerIndex
 from ..model.finger import FingerProperty
 from ..model.finger import Finger
@@ -34,7 +33,7 @@ def draw_palm(palm, ctx):
         rho, phi = car2pol(np.array([v_fill_arc[0], v_fill_arc[1]]))
         phi = norm_angle(phi)
         logger.debug('Drawing Palm: norm arc angle: ' + str(phi))
-        if equal_with_tol(phi, 0.0):
+        if np.isclose(phi, 0.0):
             phi += 2 * math.pi
         start_angle = phi - math.pi / 2.0
         end_angle = phi + math.pi / 2.0

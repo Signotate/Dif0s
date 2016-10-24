@@ -1,13 +1,8 @@
-from ....draw.common import angle_between
 from ....draw.common import directed_angle
 from ....draw.common import is_counter_clockwise
 import math
 import numpy as np
-
-
-def test_angle_between():
-    assert math.pi / 2.0 == angle_between(np.array([0.0, 1.0]),
-                                          np.array([1.0, 0.0]))
+from numpy.testing import assert_almost_equal
 
 
 def test_directed_angle():

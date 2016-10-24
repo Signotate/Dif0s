@@ -1,7 +1,6 @@
 from ..model.palm import Orientation
 from ..model.finger import FingerProperty
 from ..model.finger import FingerIndex
-from .common import angle_between
 from .common import directed_angle
 from .common import scale_matrix
 from .common import rotation_matrix

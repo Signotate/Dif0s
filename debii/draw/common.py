@@ -1,5 +1,4 @@
 """Functions to draw common shapes and do common transformations"""
-import math
 from enum import Enum
 import numpy as np
 
@@ -27,7 +26,7 @@ class Ellipse(object):
 
         ctx.translate(self.cx, self.cy)
         ctx.scale(self.rx, self.ry)
-        ctx.arc(0.0, 0.0, 1.0, 0.0, 2 * math.pi)
+        ctx.arc(0.0, 0.0, 1.0, 0.0, 2 * np.pi)
         ctx.restore()
 
         if not self.fill:
@@ -127,26 +126,6 @@ class FilledArc(Ellipse):
         ctx.restore()
 
 
-def rotate(ctx, w, h, radias):
-    ctx.translate(w / 2.0, h / 2.0)
-    ctx.rotate(radias)
-    ctx.translate(-w / 2.0, -h / 2.0)
-
-    return ctx
-
-
-def flip_over_y(ctx, w, h):
-    ctx.translate(0, h)
-    ctx.scale(1, -1)
-    return ctx
-
-
-def flip_over_x(ctx, w, h):
-    ctx.translate(w, 0)
-    ctx.scale(-1, 1)
-    return ctx
-
-
 def car2pol(v):
     rho = np.linalg.norm(v)
     phi = np.arctan2(v[1], v[0])
@@ -162,48 +141,14 @@ def pol2car(rho, phi):
 
 def norm_angle(phi):
     while phi < 0:
-        phi += 2 * math.pi
-    while phi >= 2 * math.pi:
-        phi -= 2 * math.pi
+        phi += 2 * np.pi
+    while phi >= 2 * np.pi:
+        phi -= 2 * np.pi
     return phi
 
 
-def orient_phis(p_finger, p_thumb):
-    p_finger = norm_angle(p_finger)
-    p_thumb = norm_angle(p_thumb)
-
-    if equal_with_tol(p_finger, 0.0):
-        p_finger += 2 * math.pi
-    if equal_with_tol(p_thumb, 0.0):
-        p_thumb += 2 * math.pi
-
-    while p_thumb > p_finger and abs(p_thumb - p_finger) > math.pi / 2.0:
-        p_thumb -= 2 * math.pi
-    while p_thumb < p_finger and abs(p_thumb - p_finger) > math.pi / 2.0:
-        p_finger -= 2 * math.pi
-
-    return p_finger, p_thumb
-
-
-def equal_with_tol(a, b, tol=0.001):
-    if abs(b - a) <= 0.001:
-        return True
-    return False
-
-
-def unit_vector(v):
-    return v / np.linalg.norm(v)
-
-
-def angle_between(v1, v2):
-    unit_v1 = unit_vector(v1)
-    unit_v2 = unit_vector(v2)
-
-    return np.arccos(np.clip(np.dot(unit_v1, unit_v2), -1.0, 1.0))
-
-
 def directed_angle(v1, v2):
-    return math.atan2(v2[1], v2[0]) - math.atan2(v1[1], v1[0])
+    return np.arctan2(v2[1], v2[0]) - np.arctan2(v1[1], v1[0])
 
 
 def is_counter_clockwise(v2, v1):
@@ -212,8 +157,8 @@ def is_counter_clockwise(v2, v1):
 
 
 def rotation_matrix(theta):
-    return np.array([[math.cos(theta), -math.sin(theta)],
-                     [math.sin(theta), math.cos(theta)]])
+    return np.array([[np.cos(theta), -np.sin(theta)],
+                     [np.sin(theta), np.cos(theta)]])
 
 
 def scale_matrix(scale_x, scale_y):
