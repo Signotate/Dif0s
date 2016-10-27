@@ -1,12 +1,16 @@
 import math
 import numpy as np
 import logging
-from .palm_config import palm_cfg
-from .palm_config import finger_shapes
+from .palm_config import PalmConfigs
+from .finger_config import FingerShapes
 from .common import Line
 
 
 logger = logging.getLogger(__name__)
+
+
+palm_cfg = PalmConfigs()
+finger_shapes = FingerShapes()
 
 
 def draw_palm(palm, ctx):
