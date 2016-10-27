@@ -51,3 +51,7 @@ class Finger(object):
             return false
 
         return true
+
+    def __repr__(self):
+        return 'Finger(index=%s, properties=%s)' % (repr(self.index),
+                                                    repr(self.properties))

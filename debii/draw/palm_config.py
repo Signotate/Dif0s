@@ -102,8 +102,11 @@ class PalmConfigs:
         super().__init__()
         self._palm_configs = None
 
-    def __call__(self, o_finger, o_thumb):
-        return self.palm_configs[(o_finger, o_thumb)]
+    def __call__(self, palm):
+        cfg = self.palm_configs[(palm.palm_dir, palm.finger_dir)]
+        if not palm.dominant:
+            cfg = self.mirror_palm_config(cfg)
+        return cfg
 
     @property
     def palm_configs(self):
@@ -178,7 +181,7 @@ class PalmConfigs:
                                 transforms)
 
     def shapes_for(self, palm):
-        cfg = self(palm.palm_dir, palm.finger_dir)
+        cfg = self(palm)
         if not palm.dominant:
             cfg = palm_cfg.mirror_palm_config(cfg)
         logger.debug('Getting shapes for: ' + str(cfg))
@@ -277,13 +280,13 @@ class FingerShapes(object):
                 start = self.STRAIGHT_THUMB_START
             end = self.STRAIGHT_ENDS[index.value]
             start, end = self.transform_anchors([start, end], palm_cfg)
-            return Line(start[0], start[1], end[0], end[1])
+            return [Line(start[0], start[1], end[0], end[1])]
 
         elif set([self.P_STRA, self.P_SPRE]) == finger.properties:
             start = self.FINGER_STARTS[index.value]
             end = self.SPLAY_ENDS[index.value]
             start, end = self.transform_anchors([start, end], palm_cfg)
-            return Line(start[0], start[1], end[0], end[1])
+            return [Line(start[0], start[1], end[0], end[1])]
         elif set([self.P_FOLD]):
             start = self.FOLDED_STARTS[index.value]
             end = self.FOLDED_ENDS[index.value]
@@ -297,7 +300,7 @@ class FingerShapes(object):
 
             start, end = self.transform_anchors([start, end], palm_cfg)
 
-            return Line(start[0], start[1], end[0], end[1], color=color)
+            return [Line(start[0], start[1], end[0], end[1], color=color)]
 
     def is_finger_white(self, finger, palm_cfg):
         if palm_cfg.fill:
@@ -312,10 +315,10 @@ class FingerShapes(object):
                               FingerIndex.INDEX,
                               FingerIndex.MIDDLE]
         if finger.index in thumb_side_fingers:
-            if np.all(palm_cfg.v_thumb == palm_cfg.v_filled_arc):
+            if np.any(np.equal(palm_cfg.v_thumb, palm_cfg.v_filled_arc)):
                 return True
         elif (palm_cfg.v_filled_arc is not None and 
-              np.any(palm_cfg.v_thumb != palm_cfg.v_filled_arc)):
+              np.any(np.not_equal(palm_cfg.v_thumb, palm_cfg.v_filled_arc))):
             return True
 
         return False

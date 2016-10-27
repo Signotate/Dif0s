@@ -15,3 +15,14 @@ class Hand(object):
     @property
     def fingers(self):
         return self._fingers
+
+    def __str__(self):
+        return str(self.palm)
+
+    def __repr__(self):
+        s = 'Hand(palm='
+        s += repr(self.palm)
+        s += ', fingers='
+        s += repr(self.fingers)
+        s += ')'
+        return s

@@ -47,6 +47,20 @@ class Ellipse(object):
         return Ellipse(self.cx, self.cy, self.rx, self.ry, True,
                        self.line_width)
 
+    def __repr__(self):
+        s = ('Ellipse(cx=%f, cy=%f, rx=%f, ry=%f, fill=%s, line_width=%f)' %
+             (self.cx, self.cy, self.rx, self.ry, str(self.fill),
+              self.line_width))
+
+        return s
+
+    def __eq__(self, other):
+        params = [self.cx, self.cy, self.rx, self.ry, self.fill,
+                  self.line_width]
+        other_params = [other.cx, other.cy, other.rx, other.ry, other.fill,
+                        other.line_width]
+        return np.isclose(params, other_params)
+
 
 class Line(object):
     def __init__(self, x1, y1, x2, y2, width=0.02623, color='black'):
@@ -96,7 +110,19 @@ class Line(object):
                     color=self.color)
 
     def __str__(self):
-        return '[(%f, %f), (%f, %f)]' % (self.x1, self.y1, self.x2, self.y2)
+        return repr(self)
+
+    def __repr__(self):
+        return ('Line(x1=%f, y1=%f, x2=%f, y2=%f, width=%f, color=%s)' %
+                (self.x1, self.y1, self.x2, self.y2, self.width,
+                 repr(self.color)))
+
+    def __eq__(self, other):
+        params = [self.x1, self.y1, self.x2, self.y2, self.width, self.color]
+        other_params = [other.x1, other.y1, other.x2, other.y2, other.width,
+                        other.color]
+
+        return params == other_params
 
 
 class FilledArc(Ellipse):
@@ -124,6 +150,18 @@ class FilledArc(Ellipse):
         ctx.restore()
         ctx.fill()
         ctx.restore()
+
+    def __repr__(self):
+        s = ('FilledArc(cx=%f, cy=%f, rx=%f, ry=%f, line_width=%f, '+
+             'start_radians=%f, end_radians=%f)')
+        return s % (self.cx, self.cy, self.rx, self.ry,
+              self.line_width, self.start_radians, self.end_radians)
+
+    def __eq__(self, other):
+        if not super().__eq__(other):
+            return false
+        return ([self.start_radians, self.end_radians] == 
+                [other.start_radians, other.end_radians])
 
 
 def car2pol(v):
