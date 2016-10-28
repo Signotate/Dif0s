@@ -49,6 +49,40 @@ together = [Finger(FingerIndex.THUMB,
              FingerProperty.TOGETHER])]
 
 
+round_fingers = [Finger(FingerIndex.THUMB, 
+                        [FingerProperty.ROUND,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.INDEX,
+                        [FingerProperty.ROUND,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.MIDDLE,
+                        [FingerProperty.ROUND,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.RING,
+                        [FingerProperty.ROUND,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.PINKY,
+                        [FingerProperty.ROUND,
+                         FingerProperty.TOGETHER])]
+
+
+rspread_fingers = [Finger(FingerIndex.THUMB, 
+                        [FingerProperty.ROUND,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.INDEX,
+                        [FingerProperty.ROUND,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.MIDDLE,
+                        [FingerProperty.ROUND,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.RING,
+                        [FingerProperty.ROUND,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.PINKY,
+                        [FingerProperty.ROUND,
+                         FingerProperty.SPREAD])]
+
+
 s1 = [Finger(FingerIndex.THUMB,
              [FingerProperty.FOLDED]),
       Finger(FingerIndex.INDEX,
@@ -95,9 +129,13 @@ s3 = [Finger(FingerIndex.THUMB,
              FingerProperty.TOGETHER])]
 
 
-finger_sets = [('folded', folded),
-               ('together', together),
-               ('spread', spread),
-               ('12+', s1),
-               ('0+s1+s4s+', s2),
-               ('0+s1+2+s3s+4+', s3)]
+finger_sets = [
+               #('folded', folded),
+               #('together', together),
+               #('spread', spread),
+               ('round', round_fingers),
+               ('round_spread', rspread_fingers)
+               #('12+', s1),
+               #('0+s1+s4s+', s2),
+               #('0+s1+2+s3s+4+', s3)
+]

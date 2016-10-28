@@ -2,6 +2,7 @@ from ..model.finger import FingerProperty
 from ..model.finger import FingerIndex
 from .common import pol2car
 from .common import Line
+from .common import Ellipse
 from .hand_config import *
 import numpy as np
 import logging
@@ -60,6 +61,25 @@ class FingerShapes(object):
         self.FOLDED_ENDS = [np.array(pol2car(self.FOLDED_END_RADIUS, phi))
                             for phi in self.FINGER_START_PHIS]
 
+        self.ROUND_END_R = 0.49
+        self.ROUND_SP_END_R = 0.6
+        self.ROUND_STRA_R = 0.12
+        self.ROUND_SPRE_R = 0.09
+        self.ROUND_T_PHI = 5.48731
+        self.ROUND_T_LEN = 0.5
+        self.ROUND_SCALES = [1.0, 0.92, 0.93, 0.92, 0.87]
+        self.ROUND_LENS = [self.ROUND_END_R * s for s in self.ROUND_SCALES]
+        self.ROUND_TOGETHER_POS = []
+        for s, l in zip(self.FINGER_STARTS, self.ROUND_LENS):
+            self.ROUND_TOGETHER_POS.append(np.array([s[0], l]))
+        self.ROUND_TOGETHER_POS[0] = np.array(pol2car(self.ROUND_T_LEN,
+                                                      self.ROUND_T_PHI))
+        self.ROUND_SPREAD_POS = []
+        for t, s in zip(self.FINGER_START_PHIS, self.ROUND_SCALES):
+            self.ROUND_SPREAD_POS.append(pol2car(self.ROUND_SP_END_R * s, t))
+        self.ROUND_SPREAD_POS[0] = np.array(pol2car(self.ROUND_T_LEN,
+                                                    self.ROUND_T_PHI))
+
     def shapes_for(self, finger, palm_cfg):
         index, features = finger.index, finger.properties
         if set([self.P_STRA, self.P_TOGE]) == finger.properties:
@@ -75,7 +95,7 @@ class FingerShapes(object):
             end = self.SPLAY_ENDS[index.value]
             start, end = self.transform_anchors([start, end], palm_cfg)
             return [Line(start[0], start[1], end[0], end[1])]
-        elif set([self.P_FOLD]):
+        elif set([self.P_FOLD]) == finger.properties:
             start = self.FOLDED_STARTS[index.value]
             end = self.FOLDED_ENDS[index.value]
             color = 'black'
@@ -89,6 +109,34 @@ class FingerShapes(object):
             start, end = self.transform_anchors([start, end], palm_cfg)
 
             return [Line(start[0], start[1], end[0], end[1], color=color)]
+        elif set([self.P_ROUN, self.P_TOGE]) == finger.properties:
+            pos = self.ROUND_TOGETHER_POS[index.value]
+            pos = self.transform_anchors([pos], palm_cfg)[0]
+            r_scale = 1.0
+            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+                r_scale = 0.6
+            elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                  PALM_MINOR_RADIUS):
+                r_scale = 1.3
+            return [Ellipse(pos[0],
+                            pos[1],
+                            self.ROUND_SPRE_R * r_scale,
+                            self.ROUND_SPRE_R * r_scale)]
+        elif set([self.P_ROUN, self.P_SPRE]) == finger.properties:
+            pos = self.ROUND_SPREAD_POS[index.value]
+            pos = self.transform_anchors([pos], palm_cfg)[0]
+            r_scale = 1.0
+            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+                r_scale = 0.6
+            elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                  PALM_MINOR_RADIUS):
+                r_scale = 1.3
+            return [Ellipse(pos[0],
+                            pos[1],
+                            self.ROUND_SPRE_R * r_scale,
+                            self.ROUND_SPRE_R * r_scale)]
 
     def is_finger_white(self, finger, palm_cfg):
         if palm_cfg.fill:
