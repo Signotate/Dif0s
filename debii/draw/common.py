@@ -164,6 +164,52 @@ class FilledArc(Ellipse):
                 [other.start_radians, other.end_radians])
 
 
+class Triangle(object):
+    def __init__(self, cx, cy, v, width=0.02623, color='black'):
+        super().__init__()
+        self.cx = float(cx)
+        self.cy = float(cy)
+        self.v = v
+        self.width = float(width)
+        self.color = color
+
+    def draw(self, ctx):
+        ctx.save()
+        ctx.set_source_rgb(0, 0, 0)
+        ctx.set_line_width(self.width)
+        ctx.save()
+
+        R = rotation_matrix(2.0 * np.pi / 3.0)
+        S = np.array([[1.0, 0.0], [0.0, -1.0]])
+        p1 = self.v
+        p2 = R.dot(self.v)
+        p3 = R.dot(p2)
+
+        p1 = S.dot(p1)
+        p2 = S.dot(p2)
+        p3 = S.dot(p3)
+
+        ctx.translate(self.cx, self.cy)
+        ctx.move_to(p1[0], p1[1])
+        ctx.line_to(p2[0], p2[1])
+        ctx.line_to(p3[0], p3[1])
+        ctx.line_to(p1[0], p1[1])
+        ctx.restore()
+        ctx.fill()
+        ctx.restore()
+
+    def __eq__(self, other):
+        params = [self.cx, self.cy, self.l, self.width]
+        other_params = [other.cx, other.cy, other.l, other.width]
+        if not np.all(np.isclose(params, other_params)):
+            return False
+        return self.color == other.color
+
+    def __repr__(self):
+        s = 'Triangle(cx=%f, cy=%f, v=%f, width=%f, color=%s)'
+        return s % (self.cx, self.cy, self.v, self.width, str(self.color))
+
+
 def car2pol(v):
     rho = np.linalg.norm(v)
     phi = np.arctan2(v[1], v[0])

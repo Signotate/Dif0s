@@ -49,7 +49,7 @@ together = [Finger(FingerIndex.THUMB,
              FingerProperty.TOGETHER])]
 
 
-round_fingers = [Finger(FingerIndex.THUMB, 
+round_fingers = [Finger(FingerIndex.THUMB,
                         [FingerProperty.ROUND,
                          FingerProperty.TOGETHER]),
                  Finger(FingerIndex.INDEX,
@@ -66,7 +66,7 @@ round_fingers = [Finger(FingerIndex.THUMB,
                          FingerProperty.TOGETHER])]
 
 
-rspread_fingers = [Finger(FingerIndex.THUMB, 
+rspread_fingers = [Finger(FingerIndex.THUMB,
                         [FingerProperty.ROUND,
                          FingerProperty.SPREAD]),
                  Finger(FingerIndex.INDEX,
@@ -81,6 +81,56 @@ rspread_fingers = [Finger(FingerIndex.THUMB,
                  Finger(FingerIndex.PINKY,
                         [FingerProperty.ROUND,
                          FingerProperty.SPREAD])]
+
+
+bentt_fingers = [Finger(FingerIndex.THUMB,
+                        [FingerProperty.BENT,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.INDEX,
+                        [FingerProperty.BENT,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.MIDDLE,
+                        [FingerProperty.BENT,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.RING,
+                        [FingerProperty.BENT,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.PINKY,
+                        [FingerProperty.BENT,
+                         FingerProperty.TOGETHER])]
+
+
+bents_fingers = [Finger(FingerIndex.THUMB,
+                        [FingerProperty.BENT,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.INDEX,
+                        [FingerProperty.BENT,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.MIDDLE,
+                        [FingerProperty.BENT,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.RING,
+                        [FingerProperty.BENT,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.PINKY,
+                        [FingerProperty.BENT,
+                         FingerProperty.SPREAD])]
+
+
+round_bent_fingers = [Finger(FingerIndex.THUMB,
+                        [FingerProperty.FOLDED]),
+                 Finger(FingerIndex.INDEX,
+                        [FingerProperty.STRAIGHT,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.MIDDLE,
+                        [FingerProperty.ROUND,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.RING,
+                        [FingerProperty.BENT,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.PINKY,
+                        [FingerProperty.BENT,
+                         FingerProperty.TOGETHER])]
 
 
 s1 = [Finger(FingerIndex.THUMB,
@@ -130,12 +180,15 @@ s3 = [Finger(FingerIndex.THUMB,
 
 
 finger_sets = [
-               #('folded', folded),
-               #('together', together),
-               #('spread', spread),
+               ('folded', folded),
+               ('together', together),
+               ('spread', spread),
                ('round', round_fingers),
-               ('round_spread', rspread_fingers)
-               #('12+', s1),
-               #('0+s1+s4s+', s2),
-               #('0+s1+2+s3s+4+', s3)
+               ('round_spread', rspread_fingers),
+               ('bent_together', bentt_fingers),
+               ('bent_spread', bents_fingers),
+               ('bent_round', round_bent_fingers),
+               ('12+', s1),
+               ('0+s1+s4s+', s2),
+               ('0+s1+2+s3s+4+', s3)
 ]
