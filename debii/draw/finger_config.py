@@ -4,6 +4,7 @@ from .common import pol2car
 from .common import Line
 from .common import Ellipse
 from .common import Triangle
+from .common import Diamond
 from .hand_config import *
 import numpy as np
 import logging
@@ -95,6 +96,22 @@ class FingerShapes(object):
         self.BENT_SPREAD_POS[0] = np.array(pol2car(self.ROUND_T_LEN,
                                                    self.BENT_T_PHI))
 
+        self.TAPER_SCALES = [1.0, 0.98, 0.99, 0.98, 0.93]
+        self.TAPER_LENS = [self.ROUND_END_R * s for s in self.TAPER_SCALES]
+        self.TAPER_T_PHI = 0.0
+        self.TAPER_DIMOND_SIZE = 0.12
+        self.TAPER_TOGETHER_POS = []
+        for s, l in zip(self.FINGER_STARTS, self.TAPER_LENS):
+            self.TAPER_TOGETHER_POS.append(np.array([s[0], l]))
+        self.TAPER_TOGETHER_POS[0] = np.array(pol2car(self.ROUND_T_LEN,
+                                                      self.TAPER_T_PHI))
+
+        self.TAPER_SPREAD_POS = []
+        for t, s in zip(self.FINGER_START_PHIS, self.TAPER_SCALES):
+            self.TAPER_SPREAD_POS.append(pol2car(self.ROUND_SP_END_R * s, t))
+        self.TAPER_SPREAD_POS[0] = np.array(pol2car(self.ROUND_T_LEN,
+                                                    self.TAPER_T_PHI))
+
     def shapes_for(self, finger, palm_cfg):
         index, features = finger.index, finger.properties
         if set([self.P_STRA, self.P_TOGE]) == finger.properties:
@@ -174,6 +191,34 @@ class FingerShapes(object):
                                         np.abs(palm_cfg.v_finger)))
             v = v * l
             return [Triangle(pos[0], pos[1], v)]
+        elif set([self.P_TAPE, self.P_TOGE]) == finger.properties:
+            pos = self.TAPER_TOGETHER_POS[index.value]
+            pos = self.transform_anchors([pos], palm_cfg)[0]
+            l = self.TAPER_DIMOND_SIZE
+            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+                l = l * 0.6
+            elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MINOR_RADIUS):
+                l = l * 1.3
+            v = np.nan_to_num(np.divide(palm_cfg.v_finger,
+                                        np.abs(palm_cfg.v_finger)))
+            v = v * l
+            return [Diamond(pos[0], pos[1], v)]
+        elif set([self.P_TAPE, self.P_SPRE]) == finger.properties:
+            pos = self.TAPER_SPREAD_POS[index.value]
+            pos = self.transform_anchors([pos], palm_cfg)[0]
+            l = self.TAPER_DIMOND_SIZE
+            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+                l = l * 0.6
+            elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MINOR_RADIUS):
+                l = l * 1.3
+            v = np.nan_to_num(np.divide(palm_cfg.v_finger,
+                                        np.abs(palm_cfg.v_finger)))
+            v = v * l
+            return [Diamond(pos[0], pos[1], v)]
 
 
     def is_finger_white(self, finger, palm_cfg):

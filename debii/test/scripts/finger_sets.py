@@ -117,6 +117,40 @@ bents_fingers = [Finger(FingerIndex.THUMB,
                          FingerProperty.SPREAD])]
 
 
+tappers_fingers = [Finger(FingerIndex.THUMB,
+                        [FingerProperty.TAPER,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.INDEX,
+                        [FingerProperty.TAPER,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.MIDDLE,
+                        [FingerProperty.TAPER,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.RING,
+                        [FingerProperty.TAPER,
+                         FingerProperty.SPREAD]),
+                 Finger(FingerIndex.PINKY,
+                        [FingerProperty.TAPER,
+                         FingerProperty.SPREAD])]
+
+
+tappert_fingers = [Finger(FingerIndex.THUMB,
+                        [FingerProperty.TAPER,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.INDEX,
+                        [FingerProperty.TAPER,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.MIDDLE,
+                        [FingerProperty.TAPER,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.RING,
+                        [FingerProperty.TAPER,
+                         FingerProperty.TOGETHER]),
+                 Finger(FingerIndex.PINKY,
+                        [FingerProperty.TAPER,
+                         FingerProperty.TOGETHER])]
+
+
 round_bent_fingers = [Finger(FingerIndex.THUMB,
                         [FingerProperty.FOLDED]),
                  Finger(FingerIndex.INDEX,
@@ -188,6 +222,8 @@ finger_sets = [
                ('bent_together', bentt_fingers),
                ('bent_spread', bents_fingers),
                ('bent_round', round_bent_fingers),
+               ('taper_spread', tappers_fingers),
+               ('taper_together', tappert_fingers),
                ('12+', s1),
                ('0+s1+s4s+', s2),
                ('0+s1+2+s3s+4+', s3)

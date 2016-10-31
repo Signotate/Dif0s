@@ -199,14 +199,76 @@ class Triangle(object):
         ctx.restore()
 
     def __eq__(self, other):
-        params = [self.cx, self.cy, self.l, self.width]
-        other_params = [other.cx, other.cy, other.l, other.width]
+        params = [self.cx, self.cy, self.width]
+        other_params = [other.cx, other.cy, other.width]
         if not np.all(np.isclose(params, other_params)):
             return False
-        return self.color == other.color
+        if not self.color == other.color:
+            return False
+        if not np.all(np.isclose(self.v, other.v)):
+            return False
+        return True
 
     def __repr__(self):
         s = 'Triangle(cx=%f, cy=%f, v=%f, width=%f, color=%s)'
+        return s % (self.cx, self.cy, self.v, self.width, str(self.color))
+
+
+class Diamond(object):
+    def __init__(self, cx, cy, v, width=0.03, color='black'):
+        super().__init__()
+        self.cx = cx
+        self.cy = cy
+        self.v = v
+        self.width = width
+        self.color = color
+
+    def draw(self, ctx):
+        ctx.save()
+        ctx.set_source_rgb(0, 0, 0)
+        ctx.set_line_width(self.width)
+        ctx.save()
+
+        R = rotation_matrix(np.pi / 2.0)
+        M = np.array([[1.0, 0.0], [0.0, -1.0]])
+        S = np.array([[0.8, 0.0], [0.0, 0.8]])
+        p1 = self.v
+        p2 = R.dot(self.v)
+        p3 = R.dot(p2)
+        p4 = R.dot(p3)
+
+        p1 = M.dot(p1)
+        p2 = S.dot(p2)
+
+        p2 = M.dot(p2)
+        p3 = M.dot(p3)
+
+        p4 = S.dot(p4)
+        p4 = M.dot(p4)
+
+        ctx.translate(self.cx, self.cy)
+        ctx.move_to(p1[0], p1[1])
+        ctx.line_to(p2[0], p2[1])
+        ctx.line_to(p3[0], p3[1])
+        ctx.line_to(p4[0], p4[1])
+        ctx.line_to(p1[0], p1[1])
+        ctx.restore()
+        ctx.stroke()
+        ctx.restore()
+
+    def __eq__(self, other):
+        params = [self.cx, self.cy, self.width]
+        other_params = [other.cx, other.cy, other.width]
+        if not np.all(np.isclose(params, other_params)):
+            return False
+        if not self.color == other.color:
+            return False
+        if not np.all(np.isclose(self.v, other.v)):
+            return False
+        return True
+
+    def __repr__(self):
+        s = 'Diamond(cx=%f, cy=%f, v=%f, width=%f, color=%s)'
         return s % (self.cx, self.cy, self.v, self.width, str(self.color))
 
 
