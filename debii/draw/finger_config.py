@@ -70,6 +70,9 @@ class FingerShapes(object):
         self.ROUND_T_PHI = 5.48731
         self.ROUND_T_LEN = 0.5
         self.ROUND_SCALES = [1.0, 0.92, 0.93, 0.92, 0.87]
+        self.RC_LONG_PHIS = [5.8, 0.22689, 0.84634, 2.29542, 2.91470]
+        self.RC_PHIS = [5.8, 0.22689, 1.07634, 2.06542, 2.91470]
+        self.RC_LEN_SCALES = [0.4, 0.65, 0.55, 0.55, 0.65]
         self.ROUND_LENS = [self.ROUND_END_R * s for s in self.ROUND_SCALES]
         self.ROUND_TOGETHER_POS = []
         for s, l in zip(self.FINGER_STARTS, self.ROUND_LENS):
@@ -81,6 +84,15 @@ class FingerShapes(object):
             self.ROUND_SPREAD_POS.append(pol2car(self.ROUND_SP_END_R * s, t))
         self.ROUND_SPREAD_POS[0] = np.array(pol2car(self.ROUND_T_LEN,
                                                     self.ROUND_T_PHI))
+
+        self.RC_POS = []
+        for t, s in zip(self.RC_PHIS, self.RC_LEN_SCALES):
+            self.RC_POS.append(pol2car(s * PALM_CIRCLE_RADIUS, t))
+        self.RC_POS[0] = np.array([0.15, -0.2])
+
+        self.RC_LONG_POS = []
+        for t, s in zip(self.RC_LONG_PHIS, self.RC_LEN_SCALES):
+            self.RC_LONG_POS.append(pol2car(s * PALM_CIRCLE_RADIUS, t))
 
         self.BENT_T_PHI = 0.0
         self.BENT_TRI_SIZE = 0.12
@@ -219,6 +231,18 @@ class FingerShapes(object):
                                         np.abs(palm_cfg.v_finger)))
             v = v * l
             return [Diamond(pos[0], pos[1], v)]
+        elif set([self.P_ROUN, self.P_CONT]) == finger.properties:
+            pos = self.RC_POS[index.value]
+            r = self.ROUND_SPRE_R
+            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+                r = r * 0.6
+                pos = self.RC_LONG_POS[index.value]
+            pos = self.transform_anchors([pos], palm_cfg)[0]
+            color = 'black'
+            if self.is_finger_white(finger, palm_cfg):
+                color = 'white'
+            return [Ellipse(pos[0], pos[1], r, r, color=color)]
 
 
     def is_finger_white(self, finger, palm_cfg):

@@ -8,7 +8,8 @@ class CommonStrEnum(Enum):
 
 
 class Ellipse(object):
-    def __init__(self, cx, cy, rx, ry, fill=False, line_width=0.059016):
+    def __init__(self, cx, cy, rx, ry, fill=False, line_width=0.059016,
+                 color='black'):
         super(Ellipse, self).__init__()
 
         self.cx = cx
@@ -17,10 +18,14 @@ class Ellipse(object):
         self.ry = ry
         self.fill = fill
         self.line_width = line_width
+        self.color = color
 
     def draw(self, ctx):
         ctx.save()
-        ctx.set_source_rgb(0, 0, 0)
+        if self.color == 'black':
+            ctx.set_source_rgb(0, 0, 0)
+        elif self.color == 'white':
+            ctx.set_source_rgb(1.0, 1.0, 1.0)
         ctx.set_line_width(self.line_width)
         ctx.save()
 
@@ -45,14 +50,13 @@ class Ellipse(object):
 
     def filled(self):
         return Ellipse(self.cx, self.cy, self.rx, self.ry, True,
-                       self.line_width)
+                       self.line_width, self.color)
 
     def __repr__(self):
-        s = ('Ellipse(cx=%f, cy=%f, rx=%f, ry=%f, fill=%s, line_width=%f)' %
-             (self.cx, self.cy, self.rx, self.ry, str(self.fill),
-              self.line_width))
-
-        return s
+        s = ('Ellipse(cx=%f, cy=%f, rx=%f, ry=%f, fill=%s, line_width=%f,' +
+             ' color=%s')
+        return s % (self.cx, self.cy, self.rx, self.ry, str(self.fill),
+                    self.line_width, self.color)
 
     def __eq__(self, other):
         params = [self.cx, self.cy, self.rx, self.ry, self.fill,
