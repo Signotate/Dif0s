@@ -124,6 +124,15 @@ class FingerShapes(object):
         self.TAPER_SPREAD_POS[0] = np.array(pol2car(self.ROUND_T_LEN,
                                                     self.TAPER_T_PHI))
 
+        self.TC_POS = []
+        for t, s in zip(self.RC_PHIS, self.RC_LEN_SCALES):
+            self.TC_POS.append(pol2car(s * PALM_CIRCLE_RADIUS, t))
+        self.TC_POS[0] = np.array([0.15, -0.2])
+
+        self.TC_LONG_POS = []
+        for t, s in zip(self.RC_LONG_PHIS, self.RC_LEN_SCALES):
+            self.TC_LONG_POS.append(pol2car(s * PALM_CIRCLE_RADIUS, t))
+
     def shapes_for(self, finger, palm_cfg):
         index, features = finger.index, finger.properties
         if set([self.P_STRA, self.P_TOGE]) == finger.properties:
@@ -243,6 +252,21 @@ class FingerShapes(object):
             if self.is_finger_white(finger, palm_cfg):
                 color = 'white'
             return [Ellipse(pos[0], pos[1], r, r, color=color)]
+        elif set([self.P_TAPE, self.P_CONT]) == finger.properties:
+            pos = self.TC_POS[index.value]
+            l = self.TAPER_DIMOND_SIZE
+            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+                l = l * 0.6
+                pos = self.TC_LONG_POS[index.value]
+            pos = self.transform_anchors([pos], palm_cfg)[0]
+            color = 'black'
+            if self.is_finger_white(finger, palm_cfg):
+                color = 'white'
+            v = np.nan_to_num(np.divide(palm_cfg.v_finger,
+                                        np.abs(palm_cfg.v_finger)))
+            v = v * l
+            return [Diamond(pos[0], pos[1], v, color=color)]
 
 
     def is_finger_white(self, finger, palm_cfg):

@@ -229,7 +229,10 @@ class Diamond(object):
 
     def draw(self, ctx):
         ctx.save()
-        ctx.set_source_rgb(0, 0, 0)
+        if self.color == 'black':
+            ctx.set_source_rgb(0, 0, 0)
+        elif self.color == 'white':
+            ctx.set_source_rgb(1, 1, 1)
         ctx.set_line_width(self.width)
         ctx.save()
 

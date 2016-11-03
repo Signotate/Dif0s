@@ -168,6 +168,23 @@ tappert_fingers = [Finger(FingerIndex.THUMB,
                          FingerProperty.TOGETHER])]
 
 
+tapperc_fingers = [Finger(FingerIndex.THUMB,
+                        [FingerProperty.TAPER,
+                         FingerProperty.CONTACT]),
+                 Finger(FingerIndex.INDEX,
+                        [FingerProperty.TAPER,
+                         FingerProperty.CONTACT]),
+                 Finger(FingerIndex.MIDDLE,
+                        [FingerProperty.TAPER,
+                         FingerProperty.CONTACT]),
+                 Finger(FingerIndex.RING,
+                        [FingerProperty.TAPER,
+                         FingerProperty.CONTACT]),
+                 Finger(FingerIndex.PINKY,
+                        [FingerProperty.TAPER,
+                         FingerProperty.CONTACT])]
+
+
 round_bent_fingers = [Finger(FingerIndex.THUMB,
                         [FingerProperty.FOLDED]),
                  Finger(FingerIndex.INDEX,
@@ -242,6 +259,7 @@ finger_sets = [
                ('bent_round', round_bent_fingers),
                ('taper_spread', tappers_fingers),
                ('taper_together', tappert_fingers),
+               ('taper_contact', tapperc_fingers),
                ('12+', s1),
                ('0+s1+s4s+', s2),
                ('0+s1+2+s3s+4+', s3)
