@@ -1,5 +1,2 @@
-import logging
-
-
-def setup_logging():
-    logging.basicConfig(level=logging.DEBUG)
+from .utils import setup_logging
+from .utils import OrderedEnum
