@@ -131,7 +131,16 @@ class Palm(object):
 
         return s
 
+    def __eq__(self, other):
+        return ((self.palm_dir,
+                 self.finger_dir,
+                 self.dominant,
+                 self.start_pos) ==
+                (other.palm_dir,
+                 other.finger_dir,
+                 other.dominant,
+                 other.start_pos))
+
 
 if __name__ == "__main__":
     import sys
-    print(str(parse_palm(sys.argv[1])))
