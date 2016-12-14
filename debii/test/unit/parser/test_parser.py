@@ -59,13 +59,13 @@ def test_parse_hand_simple():
                                properties=[FingerProperty.CONTACT,
                                            FingerProperty.ROUND])])
 
-    assert hand_Dfu == parse_hand('Dfu')
-    assert hand_Dfu == parse_hand('Dsfu')
-    assert hand_Dfu == parse_hand('Dfu 01234-')
-    assert hand_Dfu == parse_hand('Dfu 0- 1-2-3-4-')
-    assert hand_Dfu == parse_hand('Dfu 1-')
-    assert hand_Dfu_rc == parse_hand('Dfu 123rc 4rc')
-    assert hand_NDefu == parse_hand('NDefu 1+ 23s+ 4+')
+    assert hand_Dfu == parse_hand('Dfu', parseAll=True)
+    assert hand_Dfu == parse_hand('Dsfu', parseAll=True)
+    assert hand_Dfu == parse_hand('Dfu 01234-', parseAll=True)
+    assert hand_Dfu == parse_hand('Dfu 0- 1-2-3-4-', parseAll=True)
+    assert hand_Dfu == parse_hand('Dfu 1-', parseAll=True)
+    assert hand_Dfu_rc == parse_hand('Dfu 123rc 4rc', parseAll=True)
+    assert hand_NDefu == parse_hand('NDefu 1+ 23s+ 4+', parseAll=True)
 
 def test_parse_hand_contact():
     hand_Dui_1tc = Hand(Palm(palm_dir=Orientation.UP,
@@ -145,10 +145,11 @@ def test_parse_hand_contact():
                                       properties=[FingerProperty.CONTACT,
                                                   FingerProperty.BENT])])
 
-    assert hand_Dui_1tc == parse_hand('Dsui 1tc')
-    assert hand_Dui_1tc_234b == parse_hand('Dsui 1tc 234b')
-    assert hand_Dui_1tc_234bc == parse_hand('Dsui 1tc 234bc')
-    assert hand_Dui_234bc_1tc_0c == parse_hand('Dsui 234bc 1tc 0c')
+    assert hand_Dui_1tc == parse_hand('Dsui 1tc', parseAll=True)
+    assert hand_Dui_1tc_234b == parse_hand('Dsui 1tc 234b', parseAll=True)
+    assert hand_Dui_1tc_234bc == parse_hand('Dsui 1tc 234bc', parseAll=True)
+    assert hand_Dui_234bc_1tc_0c == parse_hand('Dsui 234bc 1tc 0c',
+                                               parseAll=True)
 
 def test_parse_hand_extra_fingers():
     hand_NDeob = Hand(Palm(palm_dir=Orientation.OUT,
@@ -170,4 +171,4 @@ def test_parse_hand_extra_fingers():
                             properties=[FingerProperty.STRAIGHT,
                                         FingerProperty.TOGETHER])])
 
-    assert hand_NDeob == parse_hand('NDeob 0- 1+ 23+s 4+ 13r')
+    assert hand_NDeob == parse_hand('NDeob 0- 1+ 23+s 4+ 13r', parseAll=True)
