@@ -10,7 +10,8 @@ import logging
 from ..util import setup_logging
 from ..model.palm import parse_palm
 from ..model.palm import InvalidPalmException
-from ..draw import draw_palm
+from ..draw import draw_hand
+from ..parser import parse_hand
 
 
 logger = logging.getLogger(__name__)
@@ -156,7 +157,7 @@ class HandWidget(Gtk.DrawingArea):
             cr.translate(w / 2.0, h / 2.0)
             s = np.min([w, h])
             cr.scale(s / 2.0, s / 2.0)
-            draw_palm(self.hand, cr)
+            draw_hand(self.hand, cr)
             cr.restore()
 
             cr.show_page()
@@ -167,7 +168,8 @@ class HandWidget(Gtk.DrawingArea):
             self.hand_text = text
             self.hand = None
             try:
-                self.hand = parse_palm(text)
+                self.hand = parse_hand(text)
+                logger.debug('Parsed Hand: ' + repr(self.hand))
             except InvalidPalmException:
                 pass
             self.queue_draw()
