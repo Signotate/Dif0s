@@ -12,6 +12,7 @@ from ..model.palm import parse_palm
 from ..model.palm import InvalidPalmException
 from ..draw import draw_hand
 from ..parser import parse_hand
+from ..parser import ParseException
 
 
 logger = logging.getLogger(__name__)
@@ -130,7 +131,7 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
             ctx.translate(w / 2.0, h / 2.0)
             s = np.min([w, h]) / 2.0
             ctx.scale(s, s)
-            draw_palm(self.hand_widget.hand, ctx)
+            draw_hand(self.hand_widget.hand, ctx)
             ctx.show_page()
             if not filename.lower().endswith('.svg'):
                 surface.write_to_png(filename)
@@ -171,6 +172,8 @@ class HandWidget(Gtk.DrawingArea):
                 self.hand = parse_hand(text)
                 logger.debug('Parsed Hand: ' + repr(self.hand))
             except InvalidPalmException:
+                pass
+            except ParseException:
                 pass
             self.queue_draw()
         return self.hand is not None
