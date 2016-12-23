@@ -1,5 +1,6 @@
 from ..model.finger import FingerProperty
 from ..model.finger import FingerIndex
+from ..model.palm import Orientation
 from .common import pol2car
 from .common import Line
 from .common import Ellipse
@@ -133,7 +134,18 @@ class FingerShapes(object):
         for t, s in zip(self.RC_LONG_PHIS, self.RC_LEN_SCALES):
             self.TC_LONG_POS.append(pol2car(s * PALM_CIRCLE_RADIUS, t))
 
-    def shapes_for(self, finger, palm_cfg):
+        self.TC_IU_POS = []
+        self.C_IU_PHIS = [0.6736970912698113,
+                          1.3802063724771156,
+                          1.0793116094332935,
+                          0.40840704496667307,
+                          5.677556056737554]
+        self.C_IU_SCALES = [0.4, 0.33, 0.23, 0.17, 0.16]
+        for t, s in zip(self.C_IU_PHIS, self.C_IU_SCALES):
+            self.TC_IU_POS.append(pol2car(s, t))
+
+
+    def shapes_for(self, finger, palm, palm_cfg):
         index, features = finger.index, finger.properties
         if set([self.P_STRA, self.P_TOGE]) == finger.properties:
             start = self.FINGER_STARTS[index.value]
@@ -240,6 +252,18 @@ class FingerShapes(object):
                                         np.abs(palm_cfg.v_finger)))
             v = v * l
             return [Diamond(pos[0], pos[1], v)]
+        elif (set([self.P_ROUN, self.P_CONT]) == finger.properties
+              and self.is_in_up_palm(palm)):
+            pos = self.TC_IU_POS[index.value]
+            r = self.ROUND_SPRE_R
+            r = r * 0.6
+            pos = self.transform_c_iu_anchors([pos], palm_cfg)[0]
+            color = 'black'
+            if ((Orientation.OUT == palm.finger_dir 
+                 or Orientation.OUT == palm.palm_dir) 
+                and index != FingerIndex.THUMB):
+                color = 'white'
+            return [Ellipse(pos[0], pos[1], r, r, color=color)]
         elif set([self.P_ROUN, self.P_CONT]) == finger.properties:
             pos = self.RC_POS[index.value]
             r = self.ROUND_SPRE_R
@@ -252,6 +276,21 @@ class FingerShapes(object):
             if self.is_finger_white(finger, palm_cfg):
                 color = 'white'
             return [Ellipse(pos[0], pos[1], r, r, color=color)]
+        elif (set([self.P_TAPE, self.P_CONT]) == finger.properties
+              and self.is_in_up_palm(palm)):
+            pos = self.TC_IU_POS[index.value]
+            pos = self.transform_c_iu_anchors([pos], palm_cfg)[0]
+            l = self.TAPER_DIMOND_SIZE
+            l = l * 0.6
+            color = 'black'
+            if ((Orientation.OUT == palm.finger_dir 
+                 or Orientation.OUT == palm.palm_dir) 
+                and index != FingerIndex.THUMB):
+                color = 'white'
+            v = np.nan_to_num(np.divide(palm_cfg.v_finger,
+                                        np.abs(palm_cfg.v_finger)))
+            v = v * l
+            return [Diamond(pos[0], pos[1], v, color=color)]
         elif set([self.P_TAPE, self.P_CONT]) == finger.properties:
             pos = self.TC_POS[index.value]
             l = self.TAPER_DIMOND_SIZE
@@ -304,3 +343,27 @@ class FingerShapes(object):
                             [0.0, -1.0]]).dot(a_p)
             anchors_prime.append(a_p)
         return anchors_prime
+
+    def transform_c_iu_anchors(self, anchors, palm_config):
+        anchors_prime = []
+        for a in anchors:
+            a_p = np.array([a[0], a[1]])
+            a_p = np.array([[-1.0, 0.0], [0.0, 1.0]]).dot(a) # pre mirror
+            mirror = palm_config.transforms[0]
+            rotate = palm_config.transforms[2]
+            a_p = mirror.dot(a_p)
+            a_p = rotate.dot(a_p)
+            a_p = np.array([[1.0, 0.0],
+                            [0.0, -1.0]]).dot(a_p)
+            anchors_prime.append(a_p)
+        return anchors_prime
+
+
+
+    def is_in_up_palm(self, palm):
+        f_dir = palm.finger_dir
+        p_dir = palm.palm_dir
+        orients = [f_dir, p_dir]
+        if Orientation.IN in orients or Orientation.OUT in orients:
+            return Orientation.UP in orients or Orientation.DOWN in orients
+        return False

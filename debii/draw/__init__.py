@@ -38,7 +38,7 @@ def draw_fingers(palm, fingers, ctx):
     cfg = palm_cfg(palm)
     for f in fingers:
         logger.debug('Drawing Finger: ' + repr(f))
-        for s in finger_shapes.shapes_for(f, cfg):
+        for s in finger_shapes.shapes_for(f, palm, cfg):
             s.draw(ctx)
 
 
