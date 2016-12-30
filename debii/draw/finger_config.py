@@ -6,7 +6,10 @@ from .common import Line
 from .common import Ellipse
 from .common import Triangle
 from .common import Diamond
-from .hand_config import *
+from .hand_config import PALM_CIRCLE_RADIUS
+from .hand_config import HAND_CIRCLE_RADIUS
+from .hand_config import PALM_MINOR_RADIUS
+from .hand_config import PALM_MAJOR_RADIUS
 import numpy as np
 import logging
 
@@ -14,14 +17,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-'''
-Access shapes for a single finger, based on a palm_config
-
-Configuration is bases on a set of vectors (anchors) with define finger shapes
-for the Dfu palm config.  The vectors can be transformed to be used every
-palm configuration.
-'''
 class FingerShapes(object):
+    '''
+    Access shapes for a single finger, based on a palm_config
+
+    Configuration is bases on a set of vectors (anchors) with define finger
+    shapes for the Dfu palm config.  The vectors can be transformed to be used
+    every palm configuration.
+    '''
+
     P_STRA = FingerProperty.STRAIGHT
     P_SPRE = FingerProperty.SPREAD
     P_ROUN = FingerProperty.ROUND
@@ -29,9 +33,7 @@ class FingerShapes(object):
     P_FOLD = FingerProperty.FOLDED
     P_CONT = FingerProperty.CONTACT
     P_TAPE = FingerProperty.TAPER
-    P_X    = FingerProperty.X
     P_TOGE = FingerProperty.TOGETHER
-    
 
     def __init__(self):
         super().__init__()
@@ -43,12 +45,12 @@ class FingerShapes(object):
         self.FINGER_SCALES = [1.0, 0.85, 1.0, 0.85, 0.7]
         self.FINGER_START_PHIS = [5.39307, 0.76794, 1.34390, 1.90241, 2.44346]
         self.SPLAY_END_PHIS = [6.15228, 0.87266, 1.32645, 1.88495, 2.43473]
-        self.FINGER_LENGTHS = [HAND_CIRCLE_RADIUS * a 
+        self.FINGER_LENGTHS = [HAND_CIRCLE_RADIUS * a
                                for a in self.FINGER_SCALES]
 
         self.FINGER_STARTS = [np.array(pol2car(PALM_CIRCLE_RADIUS, t))
                               for t in self.FINGER_START_PHIS]
-        
+
         self.SPLAY_ENDS = []
         for r, t, in zip(self.FINGER_LENGTHS, self.SPLAY_END_PHIS):
             self.SPLAY_ENDS.append(np.array(pol2car(r, t)))
@@ -57,9 +59,10 @@ class FingerShapes(object):
         for s, l in zip(self.FINGER_STARTS, self.FINGER_LENGTHS):
             self.STRAIGHT_ENDS.append(np.array([s[0], l]))
         self.STRAIGHT_ENDS[0] = np.array([PALM_CIRCLE_RADIUS + 0.08, 0.3])
-        self.STRAIGHT_THUMB_START = np.array(pol2car(PALM_CIRCLE_RADIUS, 2 * np.pi))
+        self.STRAIGHT_THUMB_START = np.array(pol2car(PALM_CIRCLE_RADIUS,
+                                                     2 * np.pi))
 
-        self.FOLDED_STARTS = [np.array(pol2car(self.FOLDED_START_RADIUS, phi)) 
+        self.FOLDED_STARTS = [np.array(pol2car(self.FOLDED_START_RADIUS, phi))
                               for phi in self.FINGER_START_PHIS]
         self.FOLDED_ENDS = [np.array(pol2car(self.FOLDED_END_RADIUS, phi))
                             for phi in self.FINGER_START_PHIS]
@@ -97,7 +100,7 @@ class FingerShapes(object):
 
         self.BENT_T_PHI = 0.0
         self.BENT_TRI_SIZE = 0.12
-        self.BENT_TOGETHER_POS =[]
+        self.BENT_TOGETHER_POS = []
         for s, l in zip(self.FINGER_STARTS, self.ROUND_LENS):
             self.BENT_TOGETHER_POS.append(np.array([s[0], l]))
         self.BENT_TOGETHER_POS[0] = np.array(pol2car(self.ROUND_T_LEN,
@@ -144,7 +147,6 @@ class FingerShapes(object):
         for t, s in zip(self.C_IU_PHIS, self.C_IU_SCALES):
             self.TC_IU_POS.append(pol2car(s, t))
 
-
     def shapes_for(self, finger, palm, palm_cfg):
         index, features = finger.index, finger.properties
         if set([self.P_STRA, self.P_TOGE]) == finger.properties:
@@ -179,7 +181,7 @@ class FingerShapes(object):
             pos = self.transform_anchors([pos], palm_cfg)[0]
             r_scale = 1.0
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MAJOR_RADIUS):
+                    PALM_MAJOR_RADIUS):
                 r_scale = 0.6
             elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
                   PALM_MINOR_RADIUS):
@@ -193,7 +195,7 @@ class FingerShapes(object):
             pos = self.transform_anchors([pos], palm_cfg)[0]
             r_scale = 1.0
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MAJOR_RADIUS):
+                    PALM_MAJOR_RADIUS):
                 r_scale = 0.6
             elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
                   PALM_MINOR_RADIUS):
@@ -207,7 +209,7 @@ class FingerShapes(object):
             pos = self.transform_anchors([pos], palm_cfg)[0]
             l = self.BENT_TRI_SIZE
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MINOR_RADIUS):
+                    PALM_MINOR_RADIUS):
                 l = l * 1.3
             v = np.nan_to_num(np.divide(palm_cfg.v_finger,
                                         np.abs(palm_cfg.v_finger)))
@@ -218,7 +220,7 @@ class FingerShapes(object):
             pos = self.transform_anchors([pos], palm_cfg)[0]
             l = self.BENT_TRI_SIZE
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MINOR_RADIUS):
+                    PALM_MINOR_RADIUS):
                 l = l * 1.3
             v = np.nan_to_num(np.divide(palm_cfg.v_finger,
                                         np.abs(palm_cfg.v_finger)))
@@ -229,10 +231,10 @@ class FingerShapes(object):
             pos = self.transform_anchors([pos], palm_cfg)[0]
             l = self.TAPER_DIMOND_SIZE
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MAJOR_RADIUS):
+                    PALM_MAJOR_RADIUS):
                 l = l * 0.6
             elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MINOR_RADIUS):
+                    PALM_MINOR_RADIUS):
                 l = l * 1.3
             v = np.nan_to_num(np.divide(palm_cfg.v_finger,
                                         np.abs(palm_cfg.v_finger)))
@@ -243,10 +245,10 @@ class FingerShapes(object):
             pos = self.transform_anchors([pos], palm_cfg)[0]
             l = self.TAPER_DIMOND_SIZE
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MAJOR_RADIUS):
+                    PALM_MAJOR_RADIUS):
                 l = l * 0.6
             elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MINOR_RADIUS):
+                    PALM_MINOR_RADIUS):
                 l = l * 1.3
             v = np.nan_to_num(np.divide(palm_cfg.v_finger,
                                         np.abs(palm_cfg.v_finger)))
@@ -259,16 +261,16 @@ class FingerShapes(object):
             r = r * 0.6
             pos = self.transform_c_iu_anchors([pos], palm_cfg)[0]
             color = 'black'
-            if ((Orientation.OUT == palm.finger_dir 
-                 or Orientation.OUT == palm.palm_dir) 
-                and index != FingerIndex.THUMB):
+            if ((Orientation.OUT == palm.finger_dir or
+                    Orientation.OUT == palm.palm_dir) and
+                    index != FingerIndex.THUMB):
                 color = 'white'
             return [Ellipse(pos[0], pos[1], r, r, color=color)]
         elif set([self.P_ROUN, self.P_CONT]) == finger.properties:
             pos = self.RC_POS[index.value]
             r = self.ROUND_SPRE_R
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MAJOR_RADIUS):
+                    PALM_MAJOR_RADIUS):
                 r = r * 0.6
                 pos = self.RC_LONG_POS[index.value]
             pos = self.transform_anchors([pos], palm_cfg)[0]
@@ -283,9 +285,9 @@ class FingerShapes(object):
             l = self.TAPER_DIMOND_SIZE
             l = l * 0.6
             color = 'black'
-            if ((Orientation.OUT == palm.finger_dir 
-                 or Orientation.OUT == palm.palm_dir) 
-                and index != FingerIndex.THUMB):
+            if ((Orientation.OUT == palm.finger_dir
+                    or Orientation.OUT == palm.palm_dir)
+                    and index != FingerIndex.THUMB):
                 color = 'white'
             v = np.nan_to_num(np.divide(palm_cfg.v_finger,
                                         np.abs(palm_cfg.v_finger)))
@@ -295,7 +297,7 @@ class FingerShapes(object):
             pos = self.TC_POS[index.value]
             l = self.TAPER_DIMOND_SIZE
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                PALM_MAJOR_RADIUS):
+                    PALM_MAJOR_RADIUS):
                 l = l * 0.6
                 pos = self.TC_LONG_POS[index.value]
             pos = self.transform_anchors([pos], palm_cfg)[0]
@@ -306,7 +308,6 @@ class FingerShapes(object):
                                         np.abs(palm_cfg.v_finger)))
             v = v * l
             return [Diamond(pos[0], pos[1], v, color=color)]
-
 
     def is_finger_white(self, finger, palm_cfg):
         if palm_cfg.fill:
@@ -323,7 +324,7 @@ class FingerShapes(object):
         if finger.index in thumb_side_fingers:
             if np.all(np.equal(palm_cfg.v_thumb, palm_cfg.v_filled_arc)):
                 return True
-        elif (palm_cfg.v_filled_arc is not None and 
+        elif (palm_cfg.v_filled_arc is not None and
               np.any(np.not_equal(palm_cfg.v_thumb, palm_cfg.v_filled_arc))):
             return True
 
@@ -334,7 +335,7 @@ class FingerShapes(object):
         for a in anchors:
             a_p = np.array([a[0], a[1]])
             mirror = palm_config.transforms[0]
-            scale  = palm_config.transforms[1]
+            scale = palm_config.transforms[1]
             rotate = palm_config.transforms[2]
             a_p = mirror.dot(a_p)
             a_p = rotate.dot(a_p)
@@ -348,7 +349,7 @@ class FingerShapes(object):
         anchors_prime = []
         for a in anchors:
             a_p = np.array([a[0], a[1]])
-            a_p = np.array([[-1.0, 0.0], [0.0, 1.0]]).dot(a) # pre mirror
+            a_p = np.array([[-1.0, 0.0], [0.0, 1.0]]).dot(a)  # pre mirror
             mirror = palm_config.transforms[0]
             rotate = palm_config.transforms[2]
             a_p = mirror.dot(a_p)
@@ -357,8 +358,6 @@ class FingerShapes(object):
                             [0.0, -1.0]]).dot(a_p)
             anchors_prime.append(a_p)
         return anchors_prime
-
-
 
     def is_in_up_palm(self, palm):
         f_dir = palm.finger_dir
