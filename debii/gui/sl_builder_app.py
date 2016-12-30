@@ -97,6 +97,14 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
                                              Gtk.ResponseType.CANCEL,
                                              Gtk.STOCK_SAVE,
                                              Gtk.ResponseType.ACCEPT))
+        filter_svg = Gtk.FileFilter()
+        filter_svg.set_name('SVG Files')
+        filter_svg.add_pattern('*.svg')
+        save_dialog.add_filter(filter_svg)
+        filter_png = Gtk.FileFilter()
+        filter_png.set_name('PNG Files')
+        filter_png.add_pattern('*.png')
+        save_dialog.add_filter(filter_png)
 
         save_dialog.set_local_only(False)
         save_dialog.set_modal(True)
@@ -107,7 +115,7 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
     def on_export_response(self, dialog, response_id):
         if response_id == Gtk.ResponseType.ACCEPT:
             try:
-                self.hand_to_file(dialog.get_filename())
+                self.hand_to_file(dialog.get_filename(), dialog.get_filter())
             except Exception as e:
                 display_error(self, 'Could not export hand')
                 logger.exception(e)
@@ -116,13 +124,31 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
     def on_update_hand(self, entry):
         valid = self.hand_widget.update_hand()
 
-    def hand_to_file(self, filename):
+    def hand_to_file(self, filename, file_filter):
+        file_type = None
+        if file_filter is None:
+            if filename.lower().endswith('.svg'):
+                file_type = 'svg'
+            elif filename.lower().endswith('.png'):
+                file_type = 'png'
+        if file_filter.get_name() == 'SVG Files':
+            file_type = 'svg'
+        elif file_filter.get_name() == 'PNG Files':
+            file_type = 'png'
+
+        if file_type is None:
+            display_error(self, ('Could not export hand to %s, '
+                                 + 'unsupported file type' % filename))
+
+        if not filename.lower().endswith('.' + file_type):
+            filename += '.' + file_type
+
         if self.hand_widget is None:
             return
         w, h = 300, 300
         try:
             surface = None
-            if filename.lower().endswith('.svg'):
+            if file_type == 'svg':
                 surface = cairo.SVGSurface(filename, w, h)
             else:
                 surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
@@ -133,7 +159,7 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
             ctx.scale(s, s)
             draw_hand(self.hand_widget.hand, ctx)
             ctx.show_page()
-            if not filename.lower().endswith('.svg'):
+            if file_type == 'png':
                 surface.write_to_png(filename)
         except Exception as e:
             display_error(self, 'Could not save file')
