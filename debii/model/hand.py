@@ -75,3 +75,7 @@ class Hand(object):
               sorted(other.fingers, key=lambda f: f.index)):
             return False
         return True
+
+    def is_valid(self):
+        return all(([self.palm.is_valid()] +
+                    [f.is_valid() for f in self.fingers]))

@@ -2,6 +2,9 @@
 from enum import Enum
 from ..util import OrderedEnum
 
+class InvalidFingerException(Exception):
+    pass
+
 
 class FingerProperty(Enum):
     '''
@@ -52,6 +55,29 @@ class FingerIndex(OrderedEnum):
 class Finger(object):
     '''A finger with properties'''
 
+    _valid_prop_sets = set([
+        frozenset([FingerProperty.STRAIGHT,
+                   FingerProperty.TOGETHER]),
+        frozenset([FingerProperty.STRAIGHT,
+                   FingerProperty.SPREAD]),
+        frozenset([FingerProperty.ROUND,
+                   FingerProperty.TOGETHER]),
+        frozenset([FingerProperty.ROUND,
+                   FingerProperty.SPREAD]),
+        frozenset([FingerProperty.ROUND,
+                   FingerProperty.CONTACT]),
+        frozenset([FingerProperty.BENT,
+                   FingerProperty.TOGETHER]),
+        frozenset([FingerProperty.BENT,
+                   FingerProperty.SPREAD]),
+        frozenset([FingerProperty.TAPER,
+                   FingerProperty.TOGETHER]),
+        frozenset([FingerProperty.TAPER,
+                   FingerProperty.SPREAD]),
+        frozenset([FingerProperty.TAPER,
+                   FingerProperty.CONTACT]),
+        frozenset([FingerProperty.FOLDED])])
+
     def __init__(self, index=None, properties=[]):
         self._index = index
         self._properties = self._determine_properties(properties)
@@ -79,10 +105,6 @@ class Finger(object):
         return True
 
     def _determine_properties(self, props):
-        if (self.index == FingerIndex.THUMB and
-                set(props) == set([FingerProperty.X])):
-            return set([FingerProperty.STRAIGHT, FingerProperty.TOGETHER])
-
         if props is None or len(props) == 0:
             return set([FingerProperty.FOLDED])
         elif (FingerProperty.FOLDED not in props and
@@ -93,6 +115,15 @@ class Finger(object):
             properties.add(FingerProperty.TOGETHER)
             return properties
         return set(props)
+
+    def is_valid(self):
+        if (self.index != FingerIndex.THUMB and
+                set(props) == set([FingerProperty.X])):
+            return False
+        if (self.index == FingerIndex.THUMB and
+                set(props) == set([FingerProperty.X])):
+            return True
+        return frozenset(self.properties) in self._valid_prop_sets
 
     def __repr__(self):
         return 'Finger(index=%s, properties=%s)' % (repr(self.index),

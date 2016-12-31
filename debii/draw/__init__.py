@@ -3,6 +3,7 @@ import numpy as np
 import logging
 from .palm_config import PalmConfigs
 from .finger_config import FingerShapes
+from ..model.finger import InvalidFingerException
 from .common import Line
 
 
@@ -38,8 +39,11 @@ def draw_fingers(palm, fingers, ctx):
     cfg = palm_cfg(palm)
     for f in fingers:
         logger.debug('Drawing Finger: ' + repr(f))
-        for s in finger_shapes.shapes_for(f, palm, cfg):
-            s.draw(ctx)
+        try:
+            for s in finger_shapes.shapes_for(f, palm, cfg):
+                s.draw(ctx)
+        except InvalidFingerException as e:
+            logger.exception(e)
 
 
 def draw_hand(hand, ctx):

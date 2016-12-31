@@ -141,6 +141,11 @@ class Palm(object):
                  other.dominant,
                  other.start_pos))
 
+    def is_valid(self):
+        if self.palm_dir.conflicts(self.finger_dir):
+            return False
+        return True
+
 
 if __name__ == "__main__":
     import sys

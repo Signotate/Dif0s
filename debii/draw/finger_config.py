@@ -1,5 +1,6 @@
 from ..model.finger import FingerProperty
 from ..model.finger import FingerIndex
+from ..model.finger import InvalidFingerException
 from ..model.palm import Orientation
 from .common import pol2car
 from .common import Line
@@ -34,6 +35,7 @@ class FingerShapes(object):
     P_CONT = FingerProperty.CONTACT
     P_TAPE = FingerProperty.TAPER
     P_TOGE = FingerProperty.TOGETHER
+    P_X = FingerProperty.X
 
     def __init__(self):
         super().__init__()
@@ -147,159 +149,189 @@ class FingerShapes(object):
         for t, s in zip(self.C_IU_PHIS, self.C_IU_SCALES):
             self.TC_IU_POS.append(pol2car(s, t))
 
-    def shapes_for(self, finger, palm, palm_cfg):
-        index, features = finger.index, finger.properties
-        if set([self.P_STRA, self.P_TOGE]) == finger.properties:
-            start = self.FINGER_STARTS[index.value]
-            if index == FingerIndex.THUMB:
-                start = self.STRAIGHT_THUMB_START
-            end = self.STRAIGHT_ENDS[index.value]
-            start, end = self.transform_anchors([start, end], palm_cfg)
-            return [Line(start[0], start[1], end[0], end[1])]
+        self.shape_sets = {frozenset([self.P_STRA,
+                                      self.P_TOGE]): self._shapes_stra_toge,
+                           frozenset([self.P_STRA,
+                                      self.P_SPRE]): self._shapes_stra_spre,
+                           frozenset([self.P_FOLD]): self._shapes_fold,
+                           frozenset([self.P_ROUN,
+                                      self.P_TOGE]): self._shapes_roun_toge,
+                           frozenset([self.P_ROUN,
+                                      self.P_SPRE]): self._shapes_roun_spre,
+                           frozenset([self.P_ROUN,
+                                      self.P_CONT]): self._shapes_roun_cont,
+                           frozenset([self.P_BEND,
+                                      self.P_TOGE]): self._shapes_bend_toge,
+                           frozenset([self.P_BEND,
+                                      self.P_SPRE]): self._shapes_bend_spre,
+                           frozenset([self.P_TAPE,
+                                      self.P_TOGE]): self._shapes_taper_toge,
+                           frozenset([self.P_TAPE,
+                                      self.P_SPRE]): self._shapes_taper_spre,
+                           frozenset([self.P_TAPE,
+                                      self.P_CONT]): self._shapes_taper_cont,
+                           frozenset([self.P_X]): self._shapes_stra_toge}
 
-        elif set([self.P_STRA, self.P_SPRE]) == finger.properties:
-            start = self.FINGER_STARTS[index.value]
-            end = self.SPLAY_ENDS[index.value]
-            start, end = self.transform_anchors([start, end], palm_cfg)
-            return [Line(start[0], start[1], end[0], end[1])]
-        elif set([self.P_FOLD]) == finger.properties:
-            start = self.FOLDED_STARTS[index.value]
-            end = self.FOLDED_ENDS[index.value]
-            color = 'black'
-            if index == FingerIndex.THUMB:
-                start = self.FINGER_STARTS[0]
-                end = self.FOLDED_THUMB_END
-                if self.is_finger_white(finger, palm_cfg):
-                    logger.debug('Drawing folded Thumb: Thumb is white')
-                    color = 'white'
+    def _line_shapes(self, palm, palm_cfg, finger, start, end, color='black'):
+        start, end = self.transform_anchors([start, end], palm_cfg)
+        return [Line(start[0], start[1], end[0], end[1], color=color)]
 
-            start, end = self.transform_anchors([start, end], palm_cfg)
+    def _shapes_stra_toge(self, palm, palm_cfg, finger):
+        start = self.FINGER_STARTS[finger.index.value]
+        if finger.index == FingerIndex.THUMB:
+            start = self.STRAIGHT_THUMB_START
+        end = self.STRAIGHT_ENDS[finger.index.value]
+        return self._line_shapes(palm, palm_cfg, finger, start, end)
 
-            return [Line(start[0], start[1], end[0], end[1], color=color)]
-        elif set([self.P_ROUN, self.P_TOGE]) == finger.properties:
-            pos = self.ROUND_TOGETHER_POS[index.value]
-            pos = self.transform_anchors([pos], palm_cfg)[0]
-            r_scale = 1.0
-            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                    PALM_MAJOR_RADIUS):
-                r_scale = 0.6
-            elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                  PALM_MINOR_RADIUS):
-                r_scale = 1.3
-            return [Ellipse(pos[0],
-                            pos[1],
-                            self.ROUND_SPRE_R * r_scale,
-                            self.ROUND_SPRE_R * r_scale)]
-        elif set([self.P_ROUN, self.P_SPRE]) == finger.properties:
-            pos = self.ROUND_SPREAD_POS[index.value]
-            pos = self.transform_anchors([pos], palm_cfg)[0]
-            r_scale = 1.0
-            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                    PALM_MAJOR_RADIUS):
-                r_scale = 0.6
-            elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                  PALM_MINOR_RADIUS):
-                r_scale = 1.3
-            return [Ellipse(pos[0],
-                            pos[1],
-                            self.ROUND_SPRE_R * r_scale,
-                            self.ROUND_SPRE_R * r_scale)]
-        elif set([self.P_BEND, self.P_TOGE]) == finger.properties:
-            pos = self.BENT_TOGETHER_POS[index.value]
-            pos = self.transform_anchors([pos], palm_cfg)[0]
-            l = self.BENT_TRI_SIZE
-            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                    PALM_MINOR_RADIUS):
-                l = l * 1.3
-            v = np.nan_to_num(np.divide(palm_cfg.v_finger,
-                                        np.abs(palm_cfg.v_finger)))
-            v = v * l
-            return [Triangle(pos[0], pos[1], v)]
-        elif set([self.P_BEND, self.P_SPRE]) == finger.properties:
-            pos = self.BENT_SPREAD_POS[index.value]
-            pos = self.transform_anchors([pos], palm_cfg)[0]
-            l = self.BENT_TRI_SIZE
-            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                    PALM_MINOR_RADIUS):
-                l = l * 1.3
-            v = np.nan_to_num(np.divide(palm_cfg.v_finger,
-                                        np.abs(palm_cfg.v_finger)))
-            v = v * l
-            return [Triangle(pos[0], pos[1], v)]
-        elif set([self.P_TAPE, self.P_TOGE]) == finger.properties:
-            pos = self.TAPER_TOGETHER_POS[index.value]
-            pos = self.transform_anchors([pos], palm_cfg)[0]
-            l = self.TAPER_DIMOND_SIZE
-            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                    PALM_MAJOR_RADIUS):
-                l = l * 0.6
-            elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                    PALM_MINOR_RADIUS):
-                l = l * 1.3
-            v = np.nan_to_num(np.divide(palm_cfg.v_finger,
-                                        np.abs(palm_cfg.v_finger)))
-            v = v * l
-            return [Diamond(pos[0], pos[1], v)]
-        elif set([self.P_TAPE, self.P_SPRE]) == finger.properties:
-            pos = self.TAPER_SPREAD_POS[index.value]
-            pos = self.transform_anchors([pos], palm_cfg)[0]
-            l = self.TAPER_DIMOND_SIZE
-            if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                    PALM_MAJOR_RADIUS):
-                l = l * 0.6
-            elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
-                    PALM_MINOR_RADIUS):
-                l = l * 1.3
-            v = np.nan_to_num(np.divide(palm_cfg.v_finger,
-                                        np.abs(palm_cfg.v_finger)))
-            v = v * l
-            return [Diamond(pos[0], pos[1], v)]
-        elif (set([self.P_ROUN, self.P_CONT]) == finger.properties
-              and self.is_in_up_palm(palm)):
-            pos = self.TC_IU_POS[index.value]
+    def _shapes_stra_spre(self, palm, palm_cfg, finger):
+        start = self.FINGER_STARTS[finger.index.value]
+        end = self.SPLAY_ENDS[finger.index.value]
+        return self._line_shapes(palm, palm_cfg, finger, start, end)
+
+    def _shapes_fold(self, palm, palm_cfg, finger):
+        start = self.FOLDED_STARTS[finger.index.value]
+        end = self.FOLDED_ENDS[finger.index.value]
+        color = 'black'
+        if finger.index == FingerIndex.THUMB:
+            start = self.FINGER_STARTS[0]
+            end = self.FOLDED_THUMB_END
+            if self.is_finger_white(finger, palm_cfg):
+                logger.debug('Drawing folded Thumb: Thumb is white')
+                color = 'white'
+        return self._line_shapes(palm, palm_cfg, finger, start, end,
+                                 color=color)
+
+    def _shapes_roun_toge(self, palm, palm_cfg, finger):
+        pos = self.ROUND_TOGETHER_POS[finger.index.value]
+        pos = self.transform_anchors([pos], palm_cfg)[0]
+        r_scale = 1.0
+        if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+            r_scale = 0.6
+        elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+              PALM_MINOR_RADIUS):
+            r_scale = 1.3
+        return [Ellipse(pos[0],
+                        pos[1],
+                        self.ROUND_SPRE_R * r_scale,
+                        self.ROUND_SPRE_R * r_scale)]
+
+    def _shapes_roun_spre(self, palm, palm_cfg, finger):
+        pos = self.ROUND_SPREAD_POS[finger.index.value]
+        pos = self.transform_anchors([pos], palm_cfg)[0]
+        r_scale = 1.0
+        if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+            r_scale = 0.6
+        elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+              PALM_MINOR_RADIUS):
+            r_scale = 1.3
+        return [Ellipse(pos[0],
+                        pos[1],
+                        self.ROUND_SPRE_R * r_scale,
+                        self.ROUND_SPRE_R * r_scale)]
+
+    def _shapes_bend_toge(self, palm, palm_cfg, finger):
+        pos = self.BENT_TOGETHER_POS[finger.index.value]
+        pos = self.transform_anchors([pos], palm_cfg)[0]
+        l = self.BENT_TRI_SIZE
+        if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MINOR_RADIUS):
+            l = l * 1.3
+        v = np.nan_to_num(np.divide(palm_cfg.v_finger,
+                                    np.abs(palm_cfg.v_finger)))
+        v = v * l
+        return [Triangle(pos[0], pos[1], v)]
+
+    def _shapes_bend_spre(self, palm, palm_cfg, finger):
+        pos = self.BENT_SPREAD_POS[finger.index.value]
+        pos = self.transform_anchors([pos], palm_cfg)[0]
+        l = self.BENT_TRI_SIZE
+        if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MINOR_RADIUS):
+            l = l * 1.3
+        v = np.nan_to_num(np.divide(palm_cfg.v_finger,
+                                    np.abs(palm_cfg.v_finger)))
+        v = v * l
+        return [Triangle(pos[0], pos[1], v)]
+
+    def _shapes_taper_toge(self, palm, palm_cfg, finger):
+        pos = self.TAPER_TOGETHER_POS[finger.index.value]
+        pos = self.transform_anchors([pos], palm_cfg)[0]
+        l = self.TAPER_DIMOND_SIZE
+        if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+            l = l * 0.6
+        elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MINOR_RADIUS):
+            l = l * 1.3
+        v = np.nan_to_num(np.divide(palm_cfg.v_finger,
+                                    np.abs(palm_cfg.v_finger)))
+        v = v * l
+        return [Diamond(pos[0], pos[1], v)]
+
+    def _shapes_taper_spre(self, palm, palm_cfg, finger):
+        pos = self.TAPER_SPREAD_POS[finger.index.value]
+        pos = self.transform_anchors([pos], palm_cfg)[0]
+        l = self.TAPER_DIMOND_SIZE
+        if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MAJOR_RADIUS):
+            l = l * 0.6
+        elif (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
+                PALM_MINOR_RADIUS):
+            l = l * 1.3
+        v = np.nan_to_num(np.divide(palm_cfg.v_finger,
+                                    np.abs(palm_cfg.v_finger)))
+        v = v * l
+        return [Diamond(pos[0], pos[1], v)]
+
+    def _shapes_roun_cont(self, palm, palm_cfg, finger):
+        if self.is_in_up_palm(palm):
+            pos = self.TC_IU_POS[finger.index.value]
             r = self.ROUND_SPRE_R
             r = r * 0.6
             pos = self.transform_c_iu_anchors([pos], palm_cfg)[0]
             color = 'black'
             if ((Orientation.OUT == palm.finger_dir or
                     Orientation.OUT == palm.palm_dir) and
-                    index != FingerIndex.THUMB):
+                    finger.index != FingerIndex.THUMB):
                 color = 'white'
             return [Ellipse(pos[0], pos[1], r, r, color=color)]
-        elif set([self.P_ROUN, self.P_CONT]) == finger.properties:
-            pos = self.RC_POS[index.value]
+        else:
+            pos = self.RC_POS[finger.index.value]
             r = self.ROUND_SPRE_R
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
                     PALM_MAJOR_RADIUS):
                 r = r * 0.6
-                pos = self.RC_LONG_POS[index.value]
+                pos = self.RC_LONG_POS[finger.index.value]
             pos = self.transform_anchors([pos], palm_cfg)[0]
             color = 'black'
             if self.is_finger_white(finger, palm_cfg):
                 color = 'white'
             return [Ellipse(pos[0], pos[1], r, r, color=color)]
-        elif (set([self.P_TAPE, self.P_CONT]) == finger.properties
-              and self.is_in_up_palm(palm)):
-            pos = self.TC_IU_POS[index.value]
+
+    def _shapes_taper_cont(self, palm, palm_cfg, finger):
+        if self.is_in_up_palm(palm):
+            pos = self.TC_IU_POS[finger.index.value]
             pos = self.transform_c_iu_anchors([pos], palm_cfg)[0]
             l = self.TAPER_DIMOND_SIZE
             l = l * 0.6
             color = 'black'
             if ((Orientation.OUT == palm.finger_dir
                     or Orientation.OUT == palm.palm_dir)
-                    and index != FingerIndex.THUMB):
+                    and finger.index != FingerIndex.THUMB):
                 color = 'white'
             v = np.nan_to_num(np.divide(palm_cfg.v_finger,
                                         np.abs(palm_cfg.v_finger)))
             v = v * l
             return [Diamond(pos[0], pos[1], v, color=color)]
-        elif set([self.P_TAPE, self.P_CONT]) == finger.properties:
-            pos = self.TC_POS[index.value]
+        else:
+            pos = self.TC_POS[finger.index.value]
             l = self.TAPER_DIMOND_SIZE
             if (abs(palm_cfg.v_finger[0] + palm_cfg.v_finger[1]) ==
                     PALM_MAJOR_RADIUS):
                 l = l * 0.6
-                pos = self.TC_LONG_POS[index.value]
+                pos = self.TC_LONG_POS[finger.index.value]
             pos = self.transform_anchors([pos], palm_cfg)[0]
             color = 'black'
             if self.is_finger_white(finger, palm_cfg):
@@ -308,6 +340,16 @@ class FingerShapes(object):
                                         np.abs(palm_cfg.v_finger)))
             v = v * l
             return [Diamond(pos[0], pos[1], v, color=color)]
+
+    def has_shapes_for(self, finger):
+        return frozenset(finger.properties) in self.shape_sets
+
+    def shapes_for(self, finger, palm, palm_cfg):
+        if self.has_shapes_for(finger):
+            return self.shape_sets[frozenset(finger.properties)](palm,
+                                                                 palm_cfg,
+                                                                 finger)
+        raise InvalidFingerException('No Shapes for ' + str(finger.properties))
 
     def is_finger_white(self, finger, palm_cfg):
         if palm_cfg.fill:

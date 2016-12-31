@@ -8,8 +8,8 @@ import sys
 import os
 import logging
 from ..util import setup_logging
-from ..model.palm import parse_palm
 from ..model.palm import InvalidPalmException
+from ..model.finger import InvalidFingerException
 from ..draw import draw_hand
 from ..parser import parse_hand
 from ..parser import ParseException
@@ -199,10 +199,12 @@ class HandWidget(Gtk.DrawingArea):
                 logger.debug('Parsed Hand: ' + repr(self.hand))
             except InvalidPalmException:
                 pass
+            except InvalidFingerException as e:
+                logger.exception(e)
             except ParseException:
                 pass
             self.queue_draw()
-        return self.hand is not None
+        return self.hand is not None and self.hand.is_valid()
 
 
 def display_error(window, message, secondary_text=''):
