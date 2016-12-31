@@ -1,7 +1,6 @@
 '''A simple model of a finger'''
 from enum import Enum
 from ..util import OrderedEnum
-from collections import namedtuple
 
 
 class FingerProperty(Enum):
@@ -64,7 +63,7 @@ class Finger(object):
     @property
     def properties(self):
         return self._properties
-    
+
     def __hash__(self):
         prime = 37
         result = prime * hash(self.index)
@@ -80,6 +79,10 @@ class Finger(object):
         return True
 
     def _determine_properties(self, props):
+        if (self.index == FingerIndex.THUMB and
+                set(props) == set([FingerProperty.X])):
+            return set([FingerProperty.STRAIGHT, FingerProperty.TOGETHER])
+
         if props is None or len(props) == 0:
             return set([FingerProperty.FOLDED])
         elif (FingerProperty.FOLDED not in props and

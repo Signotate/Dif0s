@@ -1,8 +1,9 @@
+from pyparsing import ParseException
 from .grammar import hand
 
 
 def parse_hand(s, parseAll=False):
-    tokens = hand.parseString(s, parseAll=False)
+    tokens = hand.parseString(s, parseAll=parseAll)
     if tokens is not None and len(tokens) > 0:
         return tokens[0]
     else:

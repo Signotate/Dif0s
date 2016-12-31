@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from pyparsing import Regex, Literal, Group, Optional, Word, OneOrMore, ZeroOrMore
+from pyparsing import Literal, Optional, Word, OneOrMore, ZeroOrMore
 from ..model.palm import Orientation
 from ..model.palm import Palm
 from ..model.finger import FingerIndex
@@ -105,4 +105,3 @@ if __name__ == '__main__':
     print(r)
     r = hand.parseString('Deui tc 54yy ', parseAll=True)
     print(r)
-    #print(repr(r.hand))
