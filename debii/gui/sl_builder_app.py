@@ -25,9 +25,20 @@ class SignLanguageBuilderApp(Gtk.Application):
 
     def __init__(self):
         Gtk.Application.__init__(self,
-                                 application_id='com.eigendomain.sl_builder')
+                                 application_id='com.eigendomain.debiy')
 
     def do_activate(self):
+        screen = Gdk.Screen.get_default()
+        gtk_provider = Gtk.CssProvider()
+        gtk_context = Gtk.StyleContext()
+        gtk_context.add_provider_for_screen(
+            screen,
+            gtk_provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
+        css_file = os.path.join(os.path.dirname(__file__), 'style.css')
+        gtk_provider.load_from_path(css_file)
+
         self.main_window = SlBuilderMainWindow(self)
         self.main_window.show_all()
 
@@ -65,7 +76,7 @@ class SignLanguageBuilderApp(Gtk.Application):
 class SlBuilderMainWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
         Gtk.ApplicationWindow.__init__(self,
-                                       title='Sign Language Builder',
+                                       title='DebiY',
                                        application=app)
         self.set_default_size(300, 300)
 
@@ -123,6 +134,12 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
 
     def on_update_hand(self, entry):
         valid = self.hand_widget.update_hand()
+        entry_style = entry.get_style_context()
+        if valid:
+            entry_style.remove_class('hand_entry_error')
+        else:
+            entry_style.add_class('hand_entry_error')
+
 
     def hand_to_file(self, filename, file_filter):
         file_type = None

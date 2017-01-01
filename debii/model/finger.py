@@ -107,7 +107,11 @@ class Finger(object):
     def _determine_properties(self, props):
         if props is None or len(props) == 0:
             return set([FingerProperty.FOLDED])
-        elif (FingerProperty.FOLDED not in props and
+        if self.index == FingerIndex.THUMB:
+            if (set([FingerProperty.X, FingerProperty.TOGETHER]) == set(props)
+                    or set([FingerProperty.X]) == set(props)):
+                return set([FingerProperty.X])
+        if (FingerProperty.FOLDED not in props and
               FingerProperty.SPREAD not in props and
               FingerProperty.CONTACT not in props and
               FingerProperty.TOGETHER not in props):
@@ -118,10 +122,10 @@ class Finger(object):
 
     def is_valid(self):
         if (self.index != FingerIndex.THUMB and
-                set(props) == set([FingerProperty.X])):
+                self.properties == set([FingerProperty.X])):
             return False
         if (self.index == FingerIndex.THUMB and
-                set(props) == set([FingerProperty.X])):
+            self.properties == set([FingerProperty.X])):
             return True
         return frozenset(self.properties) in self._valid_prop_sets
 
