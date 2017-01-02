@@ -111,6 +111,9 @@ class Finger(object):
             if (set([FingerProperty.X, FingerProperty.TOGETHER]) == set(props)
                     or set([FingerProperty.X]) == set(props)):
                 return set([FingerProperty.X])
+        if set([FingerProperty.SPREAD]) == set(props):
+            return set([FingerProperty.SPREAD,
+                       FingerProperty.STRAIGHT])
         if (FingerProperty.FOLDED not in props and
               FingerProperty.SPREAD not in props and
               FingerProperty.CONTACT not in props and

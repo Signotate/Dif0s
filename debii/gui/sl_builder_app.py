@@ -12,6 +12,7 @@ from ..model.palm import InvalidPalmException
 from ..model.finger import InvalidFingerException
 from ..draw import draw_hand
 from ..parser import parse_hand
+from ..parser import is_hand_string
 from ..parser import ParseException
 
 
@@ -94,7 +95,8 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
 
         self.hand_entry = builder.get_object('hand_entry_text_box')
         self.main_box_layout = builder.get_object('main_box_layout')
-        self.hand_widget = HandWidget(text_box=self.hand_entry)
+        self.hand_widget = HandWidget(text_box=self.hand_entry,
+                                      config_id='hand')
         self.main_box_layout.pack_start(self.hand_widget, True, True, 0)
 
         self.add(self.main_box_layout)
@@ -187,6 +189,7 @@ class HandWidget(Gtk.DrawingArea):
     def __init__(self, *args, **kwargs):
         super().__init__()
         self.text_box = kwargs['text_box']
+        self.config_id = kwargs.get('config_id', None)
         self.hand = None
         self.hand_text = None
         self.height = self.get_allocated_height()
@@ -213,15 +216,15 @@ class HandWidget(Gtk.DrawingArea):
             self.hand = None
             try:
                 self.hand = parse_hand(text)
-                logger.debug('Parsed Hand: ' + repr(self.hand))
-            except InvalidPalmException:
-                pass
-            except InvalidFingerException as e:
-                logger.exception(e)
-            except ParseException:
-                pass
+                logger.debug(('Parsed Hand (field: %s): ' % self.config_id)
+                             + repr(self.hand))
+            except (InvalidPalmException, InvalidFingerException,
+                    ParseException) as e:
+                logger.debug(('(field %s)' % self.config_id) + str(e))
             self.queue_draw()
-        return self.hand is not None and self.hand.is_valid()
+        return (self.hand is not None
+                and self.hand.is_valid()
+                and is_hand_string(text))
 
 
 def display_error(window, message, secondary_text=''):

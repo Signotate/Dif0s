@@ -43,7 +43,7 @@ def draw_fingers(palm, fingers, ctx):
             for s in finger_shapes.shapes_for(f, palm, cfg):
                 s.draw(ctx)
         except InvalidFingerException as e:
-            logger.exception(e)
+            logger.debug(str(e))
 
 
 def draw_hand(hand, ctx):
