@@ -2,6 +2,7 @@ from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gio
 from gi.repository import GObject
+from gi.repository import GdkPixbuf
 import cairo
 import numpy as np
 import sys
@@ -23,6 +24,7 @@ class SignLanguageBuilderApp(Gtk.Application):
     __module_dir = os.path.dirname(__file__)
     menu_ui_file = os.path.join(__module_dir, 'sl_builder_menu.ui')
     sl_builder_window_file = os.path.join(__module_dir, 'main_window.ui')
+    icon_file = os.path.join(__module_dir, 'icon.png')
 
     def __init__(self):
         Gtk.Application.__init__(self,
@@ -70,8 +72,8 @@ class SignLanguageBuilderApp(Gtk.Application):
         self.quit()
 
     def on_about(self, action, parameter):
-        about = Gtk.AboutDialog(transient_for=self.main_window, modal=True)
-        about.present()
+        about = Dif0sAboutDialog()
+        about.run()
 
 
 class SlBuilderMainWindow(Gtk.ApplicationWindow):
@@ -80,6 +82,7 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
                                        title='DebiY',
                                        application=app)
         self.set_default_size(300, 300)
+        self.set_icon_from_file(app.icon_file)
 
         export_action = Gio.SimpleAction.new('export', None)
         export_action.connect('activate', self.on_export)
@@ -236,3 +239,22 @@ def display_error(window, message, secondary_text=''):
         dialog.format_secondary_text(secondary_text)
         dialog.run()
         dialog.destroy()
+
+
+class Dif0sAboutDialog(Gtk.AboutDialog):
+    def __init__(self):
+        icon_file = os.path.join(os.path.dirname(__file__), 'icon.png')
+        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(icon_file, 64, 64)
+        Gtk.AboutDialog.__init__(self)
+        self.set_title('About Dif0s Sign Language Builder')
+        self.set_name('Dif0s')
+        self.set_version('0.1a0dev')
+        self.set_comments('Dif0s models and creates diagrams of sign '
+                          + 'language transcripts')
+        self.set_authors(['Brenda Clark (concept)', 'Greg Clark (software)'])
+        self.set_logo(icon)
+
+        self.connect('response', self.on_response)
+
+    def on_response(self, dialog, response):
+        self.destroy()
