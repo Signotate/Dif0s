@@ -2,7 +2,7 @@ from setuptools import setup
 from setuptools import find_packages
 
 setup(
-    name = 'DeBiI Sign Language Markup Tool',
-    version = '0.0.1',
+    name = 'Sign Language Markup Tool Kit',
+    version = '0.1.a0dev',
     packages = find_packages(),
 )

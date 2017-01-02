@@ -1,3 +1,4 @@
-# DebiI
+# Sign Language Markup Tool Kit
 
-DebiI is a sign language markup tool
+This is a tool kit for sign language transcription with a focus on language
+documentation.
