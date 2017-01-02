@@ -1,9 +1,8 @@
-from ....draw.common import directed_angle
-from ....draw.common import is_counter_clockwise
-from ....draw.common import car2pol
+from signlangmtk.draw.common import directed_angle
+from signlangmtk.draw.common import is_counter_clockwise
+from signlangmtk.draw.common import car2pol
 import math
 import numpy as np
-from numpy.testing import assert_almost_equal
 
 
 def test_directed_angle():
@@ -18,23 +17,23 @@ def test_directed_angle():
 
 
 def test_is_counter_clockwise():
-    assert False == is_counter_clockwise(np.array([1.0, 0.0]),
-                                           np.array([0.0, 1.0]))
-    assert False == is_counter_clockwise(np.array([0.0, 1.0]),
-                                           np.array([-1.0, 0.0]))
-    assert False == is_counter_clockwise(np.array([-1.0, 0.0]),
-                                           np.array([0.0, -1.0]))
-    assert False == is_counter_clockwise(np.array([0.0, -1.0]),
-                                           np.array([1.0, 0.0]))
+    assert not is_counter_clockwise(np.array([1.0, 0.0]),
+                                    np.array([0.0, 1.0]))
+    assert not is_counter_clockwise(np.array([0.0, 1.0]),
+                                    np.array([-1.0, 0.0]))
+    assert not is_counter_clockwise(np.array([-1.0, 0.0]),
+                                    np.array([0.0, -1.0]))
+    assert not is_counter_clockwise(np.array([0.0, -1.0]),
+                                    np.array([1.0, 0.0]))
 
-    assert True == is_counter_clockwise(np.array([1.0, 0.0]),
-                                           np.array([0.0, -1.0]))
-    assert True == is_counter_clockwise(np.array([0.0, -1.0]),
-                                           np.array([-1.0, 0.0]))
-    assert True == is_counter_clockwise(np.array([-1.0, 0.0]),
-                                           np.array([0.0, 1.0]))
-    assert True == is_counter_clockwise(np.array([0.0, 1.0]),
-                                           np.array([1.0, 0.0]))
+    assert is_counter_clockwise(np.array([1.0, 0.0]),
+                                np.array([0.0, -1.0]))
+    assert is_counter_clockwise(np.array([0.0, -1.0]),
+                                np.array([-1.0, 0.0]))
+    assert is_counter_clockwise(np.array([-1.0, 0.0]),
+                                np.array([0.0, 1.0]))
+    assert is_counter_clockwise(np.array([0.0, 1.0]),
+                                np.array([1.0, 0.0]))
 
 
 def test_car2pol():

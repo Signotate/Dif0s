@@ -1,19 +1,11 @@
-import sys
 import cairo
-from ...model.palm import parse_palm
-from ...model.palm import Orientation
-from ...model.palm import Palm
-from ...model.finger import FingerIndex
-from ...model.finger import FingerProperty
-from ...model.finger import Finger
-from ...model.hand import Hand
-from ...draw import draw_palm
-from ...draw import draw_orient_vectors
-from ...draw import draw_fingers
-from ...draw import draw_hand
-from ...draw.common import Line
-from ...util import setup_logging
-from .finger_sets import finger_sets
+from signlangmtk.model.palm import Orientation
+from signlangmtk.model.palm import Palm
+from signlangmtk.model.hand import Hand
+from signlangmtk.draw import draw_hand
+from signlangmtk.draw.common import Line
+from signlangmtk.util import setup_logging
+from signlangmtk.test.scripts.finger_sets import finger_sets
 import logging
 
 
@@ -62,18 +54,19 @@ def draw_grid(ctx, total_size, cell_size, fingers):
     
     ctx.restore()
 
-    for o_finger, x in zip(finger_orients, range(0, total_size[0], cell_size[0])):
+    for o_finger, x in zip(finger_orients,
+                           range(0, total_size[0], cell_size[0])):
         for o_palm, y in zip(palm_orients, 
-                               range(0, total_size[1], cell_size[1])):
-            if (o_palm is not None and o_finger is not None and not
-                o_palm.conflicts(o_finger)):
+                             range(0, total_size[1], cell_size[1])):
+            if (o_palm is not None and o_finger is not None
+                    and not o_palm.conflicts(o_finger)):
                 
                 p = Palm(o_palm, o_finger)
                 h = Hand(p, fingers)
 
                 ctx.save()
                 ctx.translate(x + cell_size[0] / 4.0, y + cell_size[1] / 2.0)
-                ctx.scale(cell_size[1] / 2.0 , cell_size[1] / 2.0)
+                ctx.scale(cell_size[1] / 2.0, cell_size[1] / 2.0)
                 draw_hand(h, ctx)
                 ctx.restore()
 
@@ -83,7 +76,7 @@ def draw_grid(ctx, total_size, cell_size, fingers):
                 ctx.save()
                 ctx.translate(x + 3.0 * cell_size[0] / 4.0,
                               y + cell_size[1] / 2.0)
-                ctx.scale(cell_size[1] / 2.0 , cell_size[1] / 2.0)
+                ctx.scale(cell_size[1] / 2.0, cell_size[1] / 2.0)
                 draw_hand(h, ctx)
                 ctx.restore()
             elif (o_palm is not None and o_finger is not None and

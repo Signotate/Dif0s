@@ -1,15 +1,16 @@
-'''A simple model of a finger'''
+"""A simple model of a finger"""
 from enum import Enum
-from ..util import OrderedEnum
+from signlangmtk.util import OrderedEnum
+
 
 class InvalidFingerException(Exception):
     pass
 
 
 class FingerProperty(Enum):
-    '''
+    """
     A property defining of a finger position or shape.
-    '''
+    """
 
     STRAIGHT = '+'
     FOLDED = '-'
@@ -23,7 +24,7 @@ class FingerProperty(Enum):
 
     @classmethod
     def parse(cls, s):
-        '''Get the orientation associated with s'''
+        """Get the orientation associated with s"""
         if s not in [o.value for o in list(cls)]:
             return None
         else:
@@ -33,7 +34,7 @@ class FingerProperty(Enum):
 
 
 class FingerIndex(OrderedEnum):
-    '''The index identifying a specific finger'''
+    """The index identifying a specific finger"""
 
     THUMB = 0
     INDEX = 1
@@ -43,7 +44,7 @@ class FingerIndex(OrderedEnum):
 
     @classmethod
     def parse(cls, s):
-        '''Get the orientation associated with s'''
+        """Get the orientation associated with s"""
         if int(s) not in [o.value for o in list(cls)]:
             return None
         else:
@@ -53,32 +54,31 @@ class FingerIndex(OrderedEnum):
 
 
 class Finger(object):
-    '''A finger with properties'''
+    """A finger with properties"""
 
-    _valid_prop_sets = set([
-        frozenset([FingerProperty.STRAIGHT,
-                   FingerProperty.TOGETHER]),
-        frozenset([FingerProperty.STRAIGHT,
-                   FingerProperty.SPREAD]),
-        frozenset([FingerProperty.ROUND,
-                   FingerProperty.TOGETHER]),
-        frozenset([FingerProperty.ROUND,
-                   FingerProperty.SPREAD]),
-        frozenset([FingerProperty.ROUND,
-                   FingerProperty.CONTACT]),
-        frozenset([FingerProperty.BENT,
-                   FingerProperty.TOGETHER]),
-        frozenset([FingerProperty.BENT,
-                   FingerProperty.SPREAD]),
-        frozenset([FingerProperty.TAPER,
-                   FingerProperty.TOGETHER]),
-        frozenset([FingerProperty.TAPER,
-                   FingerProperty.SPREAD]),
-        frozenset([FingerProperty.TAPER,
-                   FingerProperty.CONTACT]),
-        frozenset([FingerProperty.FOLDED])])
+    _valid_prop_sets = {frozenset([FingerProperty.STRAIGHT,
+                                   FingerProperty.TOGETHER]),
+                        frozenset([FingerProperty.STRAIGHT,
+                                   FingerProperty.SPREAD]),
+                        frozenset([FingerProperty.ROUND,
+                                   FingerProperty.TOGETHER]),
+                        frozenset([FingerProperty.ROUND,
+                                   FingerProperty.SPREAD]),
+                        frozenset([FingerProperty.ROUND,
+                                   FingerProperty.CONTACT]),
+                        frozenset([FingerProperty.BENT,
+                                   FingerProperty.TOGETHER]),
+                        frozenset([FingerProperty.BENT,
+                                   FingerProperty.SPREAD]),
+                        frozenset([FingerProperty.TAPER,
+                                   FingerProperty.TOGETHER]),
+                        frozenset([FingerProperty.TAPER,
+                                   FingerProperty.SPREAD]),
+                        frozenset([FingerProperty.TAPER,
+                                   FingerProperty.CONTACT]),
+                        frozenset([FingerProperty.FOLDED])}
 
-    def __init__(self, index=None, properties=[]):
+    def __init__(self, index=None, properties=frozenset([])):
         self._index = index
         self._properties = self._determine_properties(properties)
 
@@ -106,18 +106,17 @@ class Finger(object):
 
     def _determine_properties(self, props):
         if props is None or len(props) == 0:
-            return set([FingerProperty.FOLDED])
+            return {FingerProperty.FOLDED}
         if self.index == FingerIndex.THUMB:
-            if (set([FingerProperty.X, FingerProperty.TOGETHER]) == set(props)
-                    or set([FingerProperty.X]) == set(props)):
-                return set([FingerProperty.X])
-        if set([FingerProperty.SPREAD]) == set(props):
-            return set([FingerProperty.SPREAD,
-                       FingerProperty.STRAIGHT])
-        if (FingerProperty.FOLDED not in props and
-              FingerProperty.SPREAD not in props and
-              FingerProperty.CONTACT not in props and
-              FingerProperty.TOGETHER not in props):
+            if ({FingerProperty.X, FingerProperty.TOGETHER} == set(props)
+                    or {FingerProperty.X} == set(props)):
+                return {FingerProperty.X}
+        if {FingerProperty.SPREAD} == set(props):
+            return {FingerProperty.SPREAD, FingerProperty.STRAIGHT}
+        if (FingerProperty.FOLDED not in props
+                and FingerProperty.SPREAD not in props
+                and FingerProperty.CONTACT not in props
+                and FingerProperty.TOGETHER not in props):
             properties = set(props)
             properties.add(FingerProperty.TOGETHER)
             return properties
@@ -125,10 +124,10 @@ class Finger(object):
 
     def is_valid(self):
         if (self.index != FingerIndex.THUMB and
-                self.properties == set([FingerProperty.X])):
+                self.properties == {FingerProperty.X}):
             return False
-        if (self.index == FingerIndex.THUMB and
-            self.properties == set([FingerProperty.X])):
+        if (self.index == FingerIndex.THUMB
+                and self.properties == {FingerProperty.X}):
             return True
         return frozenset(self.properties) in self._valid_prop_sets
 

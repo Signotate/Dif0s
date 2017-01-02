@@ -1,8 +1,8 @@
 import os
 import sys
 import signal
-from .sl_builder_app import SignLanguageBuilderApp
-from ..util import setup_logging
+from signlangmtk.difos.gui.sl_builder_app import SignLanguageBuilderApp
+from signlangmtk.util import setup_logging
 
 
 if __name__ == '__main__':

@@ -1,15 +1,15 @@
-from ..model.palm import Orientation
-from .common import directed_angle
-from .common import scale_matrix
-from .common import rotation_matrix
-from .common import is_counter_clockwise
-from .common import car2pol
-from .common import norm_angle
-from .common import Ellipse
-from .common import FilledArc
-from .hand_config import PALM_CIRCLE_RADIUS
-from .hand_config import PALM_MINOR_RADIUS
-from .hand_config import PALM_MAJOR_RADIUS
+from signlangmtk.model.palm import Orientation
+from signlangmtk.draw.common import directed_angle
+from signlangmtk.draw.common import scale_matrix
+from signlangmtk.draw.common import rotation_matrix
+from signlangmtk.draw.common import is_counter_clockwise
+from signlangmtk.draw.common import car2pol
+from signlangmtk.draw.common import norm_angle
+from signlangmtk.draw.common import Ellipse
+from signlangmtk.draw.common import FilledArc
+from signlangmtk.draw.hand_config import PALM_CIRCLE_RADIUS
+from signlangmtk.draw.hand_config import PALM_MINOR_RADIUS
+from signlangmtk.draw.hand_config import PALM_MAJOR_RADIUS
 import numpy as np
 from collections import namedtuple
 import logging
@@ -41,36 +41,31 @@ class PalmConfigs:
                                            half_filled_direction,
                                            finger_radius)
     '''
-    PALM_CONFIGS = {}
-    PALM_CONFIGS[(FORWARD, UP)] = (NORTH, EAST, False, None, PALM_CIRCLE_RADIUS)
-    PALM_CONFIGS[(FORWARD, DOWN)] = (SOUTH, WEST, False, None, PALM_CIRCLE_RADIUS)
-    PALM_CONFIGS[(FORWARD, IN)] = (EAST, SOUTH, False, None, PALM_CIRCLE_RADIUS)
-    PALM_CONFIGS[(FORWARD, OUT)] = (WEST, NORTH, False, None, PALM_CIRCLE_RADIUS)
-
-    PALM_CONFIGS[(BODY, UP)] = (NORTH, WEST, True, None, PALM_CIRCLE_RADIUS)
-    PALM_CONFIGS[(BODY, DOWN)] = (SOUTH, EAST, True, None, PALM_CIRCLE_RADIUS)
-    PALM_CONFIGS[(BODY, IN)] = (EAST, NORTH, True, None, PALM_CIRCLE_RADIUS)
-    PALM_CONFIGS[(BODY, OUT)] = (WEST, SOUTH, True, None, PALM_CIRCLE_RADIUS)
-
-    PALM_CONFIGS[(IN, UP)] = (NORTH, WEST, False, WEST, PALM_MAJOR_RADIUS)
-    PALM_CONFIGS[(IN, DOWN)] = (SOUTH, WEST, False, WEST, PALM_MAJOR_RADIUS)
-    PALM_CONFIGS[(IN, FORWARD)] = (EAST, NORTH, False, WEST, PALM_MINOR_RADIUS)
-    PALM_CONFIGS[(IN, BODY)] = (EAST, SOUTH, False, WEST, PALM_MINOR_RADIUS)
-
-    PALM_CONFIGS[(OUT, UP)] = (NORTH, EAST, True, None, PALM_MAJOR_RADIUS)
-    PALM_CONFIGS[(OUT, DOWN)] = (SOUTH, EAST, True, None, PALM_MAJOR_RADIUS)
-    PALM_CONFIGS[(OUT, FORWARD)] = (WEST, SOUTH, True, None, PALM_MINOR_RADIUS)
-    PALM_CONFIGS[(OUT, BODY)] = (EAST, NORTH, True, None, PALM_MINOR_RADIUS)
-
-    PALM_CONFIGS[(UP, IN)] = (EAST, SOUTH, False, SOUTH, PALM_MAJOR_RADIUS)
-    PALM_CONFIGS[(UP, OUT)] = (WEST, NORTH, False, SOUTH, PALM_MAJOR_RADIUS)
-    PALM_CONFIGS[(UP, FORWARD)] = (SOUTH, WEST, False, None, PALM_MINOR_RADIUS)
-    PALM_CONFIGS[(UP, BODY)] = (NORTH, EAST, False, None, PALM_MINOR_RADIUS)
-
-    PALM_CONFIGS[(DOWN, IN)] = (EAST, NORTH, False, NORTH, PALM_MAJOR_RADIUS)
-    PALM_CONFIGS[(DOWN, OUT)] = (WEST, SOUTH, False, NORTH, PALM_MAJOR_RADIUS)
-    PALM_CONFIGS[(DOWN, FORWARD)] = (SOUTH, EAST, True, None, PALM_MINOR_RADIUS)
-    PALM_CONFIGS[(DOWN, BODY)] = (NORTH, WEST, True, None, PALM_MINOR_RADIUS)
+    PALM_CONFIGS = {
+        (FORWARD, UP): (NORTH, EAST, False, None, PALM_CIRCLE_RADIUS),
+        (FORWARD, DOWN): (SOUTH, WEST, False, None, PALM_CIRCLE_RADIUS),
+        (FORWARD, IN): (EAST, SOUTH, False, None, PALM_CIRCLE_RADIUS),
+        (FORWARD, OUT): (WEST, NORTH, False, None, PALM_CIRCLE_RADIUS),
+        (BODY, UP): (NORTH, WEST, True, None, PALM_CIRCLE_RADIUS),
+        (BODY, DOWN): (SOUTH, EAST, True, None, PALM_CIRCLE_RADIUS),
+        (BODY, IN): (EAST, NORTH, True, None, PALM_CIRCLE_RADIUS),
+        (BODY, OUT): (WEST, SOUTH, True, None, PALM_CIRCLE_RADIUS),
+        (IN, UP): (NORTH, WEST, False, WEST, PALM_MAJOR_RADIUS),
+        (IN, DOWN): (SOUTH, WEST, False, WEST, PALM_MAJOR_RADIUS),
+        (IN, FORWARD): (EAST, NORTH, False, WEST, PALM_MINOR_RADIUS),
+        (IN, BODY): (EAST, SOUTH, False, WEST, PALM_MINOR_RADIUS),
+        (OUT, UP): (NORTH, EAST, True, None, PALM_MAJOR_RADIUS),
+        (OUT, DOWN): (SOUTH, EAST, True, None, PALM_MAJOR_RADIUS),
+        (OUT, FORWARD): (WEST, SOUTH, True, None, PALM_MINOR_RADIUS),
+        (OUT, BODY): (EAST, NORTH, True, None, PALM_MINOR_RADIUS),
+        (UP, IN): (EAST, SOUTH, False, SOUTH, PALM_MAJOR_RADIUS),
+        (UP, OUT): (WEST, NORTH, False, SOUTH, PALM_MAJOR_RADIUS),
+        (UP, FORWARD): (SOUTH, WEST, False, None, PALM_MINOR_RADIUS),
+        (UP, BODY): (NORTH, EAST, False, None, PALM_MINOR_RADIUS),
+        (DOWN, IN): (EAST, NORTH, False, NORTH, PALM_MAJOR_RADIUS),
+        (DOWN, OUT): (WEST, SOUTH, False, NORTH, PALM_MAJOR_RADIUS),
+        (DOWN, FORWARD): (SOUTH, EAST, True, None, PALM_MINOR_RADIUS),
+        (DOWN, BODY): (NORTH, WEST, True, None, PALM_MINOR_RADIUS)}
 
     '''A Palm Configuration'''
     _PalmConfig = namedtuple('_PalmConfig', ['v_finger',
@@ -169,8 +164,7 @@ class PalmConfigs:
         rx = v_finger[0] + v_thumb[0]
         ry = v_finger[1] + v_thumb[1]
 
-        palm_shapes = []
-        palm_shapes.append(Ellipse(0.0, 0.0, float(rx), float(ry), fill))
+        palm_shapes = [Ellipse(0.0, 0.0, float(rx), float(ry), fill)]
 
         if v_fill_arc is not None:
             rho, phi = car2pol(np.array([v_fill_arc[0], v_fill_arc[1]]))

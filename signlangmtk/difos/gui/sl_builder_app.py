@@ -8,13 +8,13 @@ import numpy as np
 import sys
 import os
 import logging
-from ..util import setup_logging
-from ..model.palm import InvalidPalmException
-from ..model.finger import InvalidFingerException
-from ..draw import draw_hand
-from ..parser import parse_hand
-from ..parser import is_hand_string
-from ..parser import ParseException
+from signlangmtk.util import setup_logging
+from signlangmtk.model.palm import InvalidPalmException
+from signlangmtk.model.finger import InvalidFingerException
+from signlangmtk.draw import draw_hand
+from signlangmtk.parser import parse_hand
+from signlangmtk.parser import is_hand_string
+from signlangmtk.parser import ParseException
 
 
 logger = logging.getLogger(__name__)

@@ -1,10 +1,10 @@
 import cairo
 import os
 from ....draw import draw_hand
-from .utils import cairo_surfaces_equal
-from .utils import cairo_surface
-from ...utils import all_orients
-from ....draw import draw_hand
+from signlangmtk.test.unit.draw.utils import cairo_surfaces_equal
+from signlangmtk.test.unit.draw.utils import cairo_surface
+from signlangmtk.test.utils import all_orients
+from signlangmtk.draw import draw_hand
 from nose.tools import nottest
 
 

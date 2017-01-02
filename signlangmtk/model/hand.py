@@ -1,13 +1,13 @@
-from .finger import Finger
-from .finger import FingerIndex
-from .finger import FingerProperty
-
-
 """The model of the hand part of a sign language sign"""
 
 
+from signlangmtk.model.finger import Finger
+from signlangmtk.model.finger import FingerIndex
+from signlangmtk.model.finger import FingerProperty
+
+
 class Hand(object):
-    '''The universal hand'''
+    """The universal hand"""
 
     _default_fingers = {i: Finger(i) for i in list(FingerIndex)}
 
@@ -32,14 +32,14 @@ class Hand(object):
                 finger_lst.append(f)
         for i, f in ((finger.index, finger) for finger in finger_lst):
             if (FingerProperty.CONTACT in f.properties
-                and i != FingerIndex.THUMB):
+                    and i != FingerIndex.THUMB):
 
                 if FingerIndex.THUMB in fingers:
                     thumb = fingers[FingerIndex.THUMB]
                     if FingerProperty.CONTACT not in thumb.properties:
                         thumb = Finger(FingerIndex.THUMB, f.properties)
                         fingers[FingerIndex.THUMB] = thumb
-                    elif set([FingerProperty.CONTACT]) == thumb.properties:
+                    elif {FingerProperty.CONTACT} == thumb.properties:
                         thumb = Finger(FingerIndex.THUMB, f.properties)
                         fingers[FingerIndex.THUMB] = thumb
                 else:
@@ -55,7 +55,6 @@ class Hand(object):
                 fingers[i] = f
 
         return list(fingers.values())
-
 
     def __str__(self):
         return str(self.palm)

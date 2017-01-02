@@ -1,51 +1,50 @@
 from collections import OrderedDict
 from pyparsing import Literal, Optional, Word, OneOrMore, ZeroOrMore
-from ..model.palm import Orientation
-from ..model.palm import Palm
-from ..model.finger import FingerIndex
-from ..model.finger import FingerProperty
-from ..model.finger import Finger
-from ..model.hand import Hand
+from signlangmtk.model.palm import Orientation
+from signlangmtk.model.palm import Palm
+from signlangmtk.model.finger import FingerIndex
+from signlangmtk.model.finger import FingerProperty
+from signlangmtk.model.finger import Finger
+from signlangmtk.model.hand import Hand
 
 
-def convertDominant(tokens):
+def convert_dominant(tokens):
     return 'D' == tokens[0]
 
 
-def convertStart(tokens):
+def convert_start(tokens):
     return 's' == tokens[0]
 
 
-def convertOrient(tokens):
+def convert_orient(tokens):
     return Orientation.parse(tokens[0])
 
 
-def convertIndex(tokens):
+def convert_index(tokens):
     return FingerIndex.parse(tokens[0])
 
 
-def convertFingerProp(tokens):
+def convert_finger_prop(tokens):
     return FingerProperty.parse(tokens[0])
 
 
-def createPalm(tokens):
+def create_palm(tokens):
     return Palm(**(tokens.asDict()['palm']))
 
 
-def createHand(tokens):
+def create_hand(tokens):
     fingers = [f for f in tokens if type(f) == Finger]
     return Hand(tokens.palm, fingers)
 
 
-def createFingers(tokens):
+def create_fingers(tokens):
     print('tokens:', tokens)
     finger_confs = OrderedDict()
     index_group = tuple([])
     last_token = None
     for t in tokens:
         if type(t) == FingerIndex and type(last_token) != FingerIndex:
-            index_group = []
-            index_group.append(t)
+            index_group = [t]
         elif type(t) == FingerIndex:
             index_group.append(t)
         else:
@@ -70,21 +69,21 @@ def createFingers(tokens):
 
 
 which_hand = (Optional(Literal('N'))
-              + Literal('D')).setParseAction(convertDominant)('dominant')
+              + Literal('D')).setParseAction(convert_dominant)('dominant')
 start_end = (Literal('s') | Literal('e')).setParseAction(
-    convertStart)('start_pos')
+    convert_start)('start_pos')
 
-orient = Word('iofbud', exact=1).setParseAction(convertOrient)
+orient = Word('iofbud', exact=1).setParseAction(convert_orient)
 
-finger_index = Word('01234', exact=1)('f_index').setParseAction(convertIndex)
+finger_index = Word('01234', exact=1)('f_index').setParseAction(convert_index)
 finger_property = Word('-+xstcrb',
-                       exact=1)('f_prop').setParseAction(convertFingerProp)
+                       exact=1)('f_prop').setParseAction(convert_finger_prop)
 
 
 palm = (which_hand('dominant')
         + Optional(start_end)
         + orient('palm_dir')
-        + orient('finger_dir'))('palm').setParseAction(createPalm)
+        + orient('finger_dir'))('palm').setParseAction(create_palm)
 
 
 finger_props = OneOrMore(finger_property)
@@ -92,10 +91,10 @@ finger_indices = OneOrMore(finger_index)
 
 
 finger_conf = ZeroOrMore(
-    finger_index | finger_property)('fingers').setParseAction(createFingers)
+    finger_index | finger_property)('fingers').setParseAction(create_fingers)
 
 
-hand = (palm + finger_conf)('hand').setParseAction(createHand)
+hand = (palm + finger_conf)('hand').setParseAction(create_hand)
 
 
 if __name__ == '__main__':

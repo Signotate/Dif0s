@@ -1,16 +1,16 @@
-from ..model.finger import FingerProperty
-from ..model.finger import FingerIndex
-from ..model.finger import InvalidFingerException
-from ..model.palm import Orientation
-from .common import pol2car
-from .common import Line
-from .common import Ellipse
-from .common import Triangle
-from .common import Diamond
-from .hand_config import PALM_CIRCLE_RADIUS
-from .hand_config import HAND_CIRCLE_RADIUS
-from .hand_config import PALM_MINOR_RADIUS
-from .hand_config import PALM_MAJOR_RADIUS
+from signlangmtk.model.finger import FingerProperty
+from signlangmtk.model.finger import FingerIndex
+from signlangmtk.model.finger import InvalidFingerException
+from signlangmtk.model.palm import Orientation
+from signlangmtk.draw.common import pol2car
+from signlangmtk.draw.common import Line
+from signlangmtk.draw.common import Ellipse
+from signlangmtk.draw.common import Triangle
+from signlangmtk.draw.common import Diamond
+from signlangmtk.draw.hand_config import PALM_CIRCLE_RADIUS
+from signlangmtk.draw.hand_config import HAND_CIRCLE_RADIUS
+from signlangmtk.draw.hand_config import PALM_MINOR_RADIUS
+from signlangmtk.draw.hand_config import PALM_MAJOR_RADIUS
 import numpy as np
 import logging
 
@@ -19,13 +19,13 @@ logger = logging.getLogger(__name__)
 
 
 class FingerShapes(object):
-    '''
+    """
     Access shapes for a single finger, based on a palm_config
 
     Configuration is bases on a set of vectors (anchors) with define finger
     shapes for the Dfu palm config.  The vectors can be transformed to be used
     every palm configuration.
-    '''
+    """
 
     P_STRA = FingerProperty.STRAIGHT
     P_SPRE = FingerProperty.SPREAD

@@ -1,4 +1,4 @@
-'''A simple model of a palm position'''
+"""A simple model of a palm position"""
 
 
 from enum import Enum
@@ -11,7 +11,7 @@ __PALM_PATTERN = re.compile(r'^(?P<d_nd>N?D)(?P<start_end>[se])?' +
 
 
 def parse_palm(s):
-    '''Create a palm from its string representation'''
+    """Create a palm from its string representation"""
     match = re.match(__PALM_PATTERN, s.strip())
 
     invalid_palm = InvalidPalmException('The string \'' + str(s) + '\' is' +
@@ -59,7 +59,7 @@ class Orientation(Enum):
 
     @classmethod
     def parse(cls, s):
-        '''Get the orientation associated with s'''
+        """Get the orientation associated with s"""
         if s not in [o.value for o in list(cls)]:
             return None
         else:
@@ -71,20 +71,20 @@ class Orientation(Enum):
         return "%s.%s" % (self.__class__.__name__, self._name_)
 
     def conflicts(self, other_orient):
-        '''Return true of orientation conflict'''
-        oposites = [(Orientation.UP, Orientation.DOWN),
-                    (Orientation.IN, Orientation.OUT),
-                    (Orientation.FORWARD, Orientation.BODY)]
+        """Return true of orientation conflict"""
+        opposites = [(Orientation.UP, Orientation.DOWN),
+                     (Orientation.IN, Orientation.OUT),
+                     (Orientation.FORWARD, Orientation.BODY)]
 
-        for oposite in oposites:
-            if self in oposite and other_orient in oposite:
+        for opposite in opposites:
+            if self in opposite and other_orient in opposite:
                 return True
 
         return False
 
 
 class Palm(object):
-    '''A palm'''
+    """A palm"""
 
     def __init__(self, palm_dir=None, finger_dir=None, dominant=True,
                  start_pos=True):
@@ -145,7 +145,3 @@ class Palm(object):
         if self.palm_dir.conflicts(self.finger_dir):
             return False
         return True
-
-
-if __name__ == "__main__":
-    import sys

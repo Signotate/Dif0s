@@ -1,3 +1,3 @@
 from pyparsing import ParseException
-from .parse import parse_hand
-from .parse import is_hand_string
+from signlangmtk.parser.parse import parse_hand
+from signlangmtk.parser.parse import is_hand_string

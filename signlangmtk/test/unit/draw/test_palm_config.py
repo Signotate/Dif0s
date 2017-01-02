@@ -1,12 +1,12 @@
-from ....model.finger import Finger
-from ....model.finger import FingerIndex
-from ....model.finger import FingerProperty
-from ....model.palm import Palm
-from ....model.palm import Orientation
-from ....model.hand import Hand
-from ....draw.common import Ellipse
-from ....draw.common import FilledArc
-from ....draw import palm_cfg
+from signlangmtk.model.finger import Finger
+from signlangmtk.model.finger import FingerIndex
+from signlangmtk.model.finger import FingerProperty
+from signlangmtk.model.palm import Palm
+from signlangmtk.model.palm import Orientation
+from signlangmtk.model.hand import Hand
+from signlangmtk.draw.common import Ellipse
+from signlangmtk.draw.common import FilledArc
+from signlangmtk.draw import palm_cfg
 
 
 def test_shapes_for_palm():

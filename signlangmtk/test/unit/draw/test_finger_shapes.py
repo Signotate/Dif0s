@@ -1,12 +1,12 @@
-from ....model.palm import Orientation
-from ....model.palm import Palm
-from ....model.finger import Finger
-from ....model.finger import FingerIndex
-from ....model.finger import FingerProperty
-from ....draw.common import Line
-from ....draw import finger_shapes
-from ....draw import palm_cfg
-from .utils import lines_similar
+from signlangmtk.model.palm import Orientation
+from signlangmtk.model.palm import Palm
+from signlangmtk.model.finger import Finger
+from signlangmtk.model.finger import FingerIndex
+from signlangmtk.model.finger import FingerProperty
+from signlangmtk.draw.common import Line
+from signlangmtk.draw import finger_shapes
+from signlangmtk.draw import palm_cfg
+from signlangmtk.test.unit.draw.utils import lines_similar
 
 
 def test_shapes_for_finger():
@@ -34,7 +34,6 @@ def test_shapes_for_finger():
     e = Line(x1=-0.173664, y1=0.359672, x2=-0.425000, y2=0.359672,
              width=0.026230, color='black')
     assert lines_similar(e, finger_shapes.shapes_for(f1, p3, palm_cfg(p3))[0])
-
 
     f2 = Finger(index=FingerIndex.THUMB,
                 properties=[FingerProperty.STRAIGHT,

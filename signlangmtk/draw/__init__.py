@@ -1,10 +1,10 @@
 import math
 import numpy as np
 import logging
-from .palm_config import PalmConfigs
-from .finger_config import FingerShapes
-from ..model.finger import InvalidFingerException
-from .common import Line
+from signlangmtk.draw.palm_config import PalmConfigs
+from signlangmtk.draw.finger_config import FingerShapes
+from signlangmtk.model.finger import InvalidFingerException
+from signlangmtk.draw.common import Line
 
 
 logger = logging.getLogger(__name__)

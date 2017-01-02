@@ -1,5 +1,5 @@
 from pyparsing import ParseException
-from .grammar import hand
+from signlangmtk.parser.grammar import hand
 
 
 def parse_hand(s, parseAll=False):
