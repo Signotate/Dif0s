@@ -123,8 +123,12 @@ class Finger(object):
         return set(props)
 
     def is_valid(self):
+        if self.index is None:
+            return False
+        if self.properties is None or len(self.properties) == 0:
+            return False
         if (self.index != FingerIndex.THUMB and
-                self.properties == {FingerProperty.X}):
+                FingerProperty.X in self.properties):
             return False
         if (self.index == FingerIndex.THUMB
                 and self.properties == {FingerProperty.X}):

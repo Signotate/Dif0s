@@ -1,4 +1,4 @@
-from signlangmtk.model.palm import Orientation
+from signlangmtk.model import Orientation
 from signlangmtk.draw.common import directed_angle
 from signlangmtk.draw.common import scale_matrix
 from signlangmtk.draw.common import rotation_matrix

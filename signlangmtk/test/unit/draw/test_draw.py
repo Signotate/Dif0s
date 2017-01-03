@@ -1,6 +1,6 @@
 import cairo
 import os
-from ....draw import draw_hand
+from signlangmtk.draw import draw_hand
 from signlangmtk.test.unit.draw.utils import cairo_surfaces_equal
 from signlangmtk.test.unit.draw.utils import cairo_surface
 from signlangmtk.test.utils import all_orients

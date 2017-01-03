@@ -6,7 +6,7 @@ from signlangmtk.model.palm import Orientation
 from signlangmtk.model.hand import Hand
 from signlangmtk.draw.common import Ellipse
 from signlangmtk.draw.common import FilledArc
-from signlangmtk.draw import palm_cfg
+from signlangmtk.draw.draw_hand import palm_cfg
 
 
 def test_shapes_for_palm():

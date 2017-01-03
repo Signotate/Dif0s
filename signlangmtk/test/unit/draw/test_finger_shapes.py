@@ -4,8 +4,8 @@ from signlangmtk.model.finger import Finger
 from signlangmtk.model.finger import FingerIndex
 from signlangmtk.model.finger import FingerProperty
 from signlangmtk.draw.common import Line
-from signlangmtk.draw import finger_shapes
-from signlangmtk.draw import palm_cfg
+from signlangmtk.draw.draw_hand import finger_shapes
+from signlangmtk.draw.draw_hand import palm_cfg
 from signlangmtk.test.unit.draw.utils import lines_similar
 
 

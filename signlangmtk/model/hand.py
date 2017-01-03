@@ -6,6 +6,10 @@ from signlangmtk.model.finger import FingerIndex
 from signlangmtk.model.finger import FingerProperty
 
 
+class InvalidHandException(Exception):
+    pass
+
+
 class Hand(object):
     """The universal hand"""
 
@@ -36,7 +40,8 @@ class Hand(object):
 
                 if FingerIndex.THUMB in fingers:
                     thumb = fingers[FingerIndex.THUMB]
-                    if FingerProperty.CONTACT not in thumb.properties:
+                    if (FingerProperty.CONTACT not in thumb.properties
+                            and len(thumb.properties) == 0):
                         thumb = Finger(FingerIndex.THUMB, f.properties)
                         fingers[FingerIndex.THUMB] = thumb
                     elif {FingerProperty.CONTACT} == thumb.properties:
@@ -76,5 +81,34 @@ class Hand(object):
         return True
 
     def is_valid(self):
-        return all(([self.palm.is_valid()] +
-                    [f.is_valid() for f in self.fingers]))
+        return (self.palm.is_valid()
+                and all([f.is_valid() for f in self.fingers])
+                and self._check_fingers())
+
+    def _check_fingers(self):
+        fingers = {f.index: f for f in self.fingers}
+        for index in list(FingerIndex):
+            if index not in fingers:
+                return False
+
+        thumb = fingers[FingerIndex.THUMB]
+        contact_props = []
+        for index, finger in fingers.items():
+            if index != FingerIndex.THUMB:
+                if FingerProperty.CONTACT in finger.properties:
+                    props = set(finger.properties)
+                    props.remove(FingerProperty.CONTACT)
+                    contact_props.append(list(props)[0])
+                    if FingerProperty.CONTACT not in thumb.properties:
+                        return False
+
+        if len(contact_props) > 0:
+            thumb_has_contact_prop = False
+            for p in contact_props:
+                if p in thumb.properties:
+                    thumb_has_contact_prop = True
+
+            if not thumb_has_contact_prop:
+                return False
+
+        return True

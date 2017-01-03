@@ -1,6 +1,4 @@
-from signlangmtk.model.palm import *
-from signlangmtk.model.hand import *
-from signlangmtk.model.finger import *
+from signlangmtk.model import *
 from signlangmtk.parser import parse_hand
 
 
@@ -146,11 +144,53 @@ def test_parse_hand_contact():
                                          properties=[FingerProperty.CONTACT,
                                                      FingerProperty.BENT])])
 
+    hand_Dui_0123s_4rc = Hand(Palm(palm_dir=Orientation.UP,
+                                   finger_dir=Orientation.IN,
+                                   dominant=True,
+                                   start_pos=True),
+                              [Finger(index=FingerIndex.THUMB,
+                                      properties=[FingerProperty.STRAIGHT,
+                                                  FingerProperty.SPREAD]),
+                               Finger(index=FingerIndex.INDEX,
+                                      properties=[FingerProperty.STRAIGHT,
+                                                  FingerProperty.SPREAD]),
+                               Finger(index=FingerIndex.MIDDLE,
+                                      properties=[FingerProperty.STRAIGHT,
+                                                  FingerProperty.SPREAD]),
+                               Finger(index=FingerIndex.RING,
+                                      properties=[FingerProperty.STRAIGHT,
+                                                  FingerProperty.SPREAD]),
+                               Finger(index=FingerIndex.PINKY,
+                                      properties=[FingerProperty.CONTACT,
+                                                  FingerProperty.ROUND])])
+
+    hand_Dui_0tc_123s_4rc = Hand(Palm(palm_dir=Orientation.UP,
+                                      finger_dir=Orientation.IN,
+                                      dominant=True,
+                                      start_pos=True),
+                                 [Finger(index=FingerIndex.THUMB,
+                                         properties=[FingerProperty.TAPER,
+                                                     FingerProperty.CONTACT]),
+                                  Finger(index=FingerIndex.INDEX,
+                                         properties=[FingerProperty.STRAIGHT,
+                                                     FingerProperty.SPREAD]),
+                                  Finger(index=FingerIndex.MIDDLE,
+                                         properties=[FingerProperty.STRAIGHT,
+                                                     FingerProperty.SPREAD]),
+                                  Finger(index=FingerIndex.RING,
+                                         properties=[FingerProperty.STRAIGHT,
+                                                     FingerProperty.SPREAD]),
+                                  Finger(index=FingerIndex.PINKY,
+                                         properties=[FingerProperty.CONTACT,
+                                                     FingerProperty.ROUND])])
+
     assert hand_Dui_1tc == parse_hand('Dsui 1tc', parseAll=True)
     assert hand_Dui_1tc_234b == parse_hand('Dsui 1tc 234b', parseAll=True)
     assert hand_Dui_1tc_234bc == parse_hand('Dsui 1tc 234bc', parseAll=True)
     assert hand_Dui_234bc_1tc_0c == parse_hand('Dsui 234bc 1tc 0c',
                                                parseAll=True)
+    assert hand_Dui_0123s_4rc == parse_hand('Dui 0123s 4rc', parseAll=True)
+    assert hand_Dui_0tc_123s_4rc == parse_hand('Dui 0tc 123s 4rc', parseAll=True)
 
 
 def test_parse_hand_extra_fingers():

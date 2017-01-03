@@ -1,7 +1,7 @@
 import cairo
-from signlangmtk.model.palm import Orientation
-from signlangmtk.model.palm import Palm
-from signlangmtk.model.hand import Hand
+from signlangmtk.model import Orientation
+from signlangmtk.model import Palm
+from signlangmtk.model import Hand
 from signlangmtk.draw import draw_hand
 from signlangmtk.draw.common import Line
 from signlangmtk.util import setup_logging

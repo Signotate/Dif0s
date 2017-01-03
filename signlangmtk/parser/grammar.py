@@ -1,3 +1,4 @@
+import logging
 from collections import OrderedDict
 from pyparsing import Literal, Optional, Word, OneOrMore, ZeroOrMore
 from signlangmtk.model.palm import Orientation
@@ -6,6 +7,9 @@ from signlangmtk.model.finger import FingerIndex
 from signlangmtk.model.finger import FingerProperty
 from signlangmtk.model.finger import Finger
 from signlangmtk.model.hand import Hand
+
+
+logger = logging.getLogger(__name__)
 
 
 def convert_dominant(tokens):
@@ -38,7 +42,7 @@ def create_hand(tokens):
 
 
 def create_fingers(tokens):
-    print('tokens:', tokens)
+    logger.debug('tokens: %s' % tokens)
     finger_confs = OrderedDict()
     index_group = tuple([])
     last_token = None
@@ -54,7 +58,7 @@ def create_fingers(tokens):
             finger_confs[grp].append(t)
         last_token = t
 
-    print('finger_confs:', list(finger_confs.items()))
+    logger.debug('finger_confs: %s' % list(finger_confs.items()))
 
     fingers = []
     for indices, properties in finger_confs.items():
@@ -64,7 +68,7 @@ def create_fingers(tokens):
         for i in index_list:
             f = Finger(i, properties)
             fingers.append(f)
-    print('Parsed Fingers:', fingers)
+    logger.debug('Parsed Fingers: %s' % fingers)
     return fingers
 
 

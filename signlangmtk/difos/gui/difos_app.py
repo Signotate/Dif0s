@@ -1,34 +1,31 @@
 from gi.repository import Gtk
 from gi.repository import Gdk
 from gi.repository import Gio
-from gi.repository import GObject
-from gi.repository import GdkPixbuf
 import cairo
 import numpy as np
 import sys
 import os
 import logging
 from signlangmtk.util import setup_logging
-from signlangmtk.model.palm import InvalidPalmException
-from signlangmtk.model.finger import InvalidFingerException
+from signlangmtk.model import InvalidPalmException
+from signlangmtk.model import InvalidFingerException
+from signlangmtk.model import InvalidHandException
 from signlangmtk.draw import draw_hand
 from signlangmtk.parser import parse_hand
 from signlangmtk.parser import is_hand_string
 from signlangmtk.parser import ParseException
+from signlangmtk.difos.utils import *
 
 
 logger = logging.getLogger(__name__)
 
 
-class SignLanguageBuilderApp(Gtk.Application):
+class DifosApp(Gtk.Application):
     __module_dir = os.path.dirname(__file__)
-    menu_ui_file = os.path.join(__module_dir, 'sl_builder_menu.ui')
-    sl_builder_window_file = os.path.join(__module_dir, 'main_window.ui')
-    icon_file = os.path.join(__module_dir, 'icon.png')
 
     def __init__(self):
         Gtk.Application.__init__(self,
-                                 application_id='com.eigendomain.debiy')
+                                 application_id=APP_ID)
 
     def do_activate(self):
         screen = Gdk.Screen.get_default()
@@ -39,10 +36,9 @@ class SignLanguageBuilderApp(Gtk.Application):
             gtk_provider,
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
-        css_file = os.path.join(os.path.dirname(__file__), 'style.css')
-        gtk_provider.load_from_path(css_file)
+        gtk_provider.load_from_path(DIFOS_STYLE)
 
-        self.main_window = SlBuilderMainWindow(self)
+        self.main_window = DifosMainWindow(self)
         self.main_window.show_all()
 
     def do_startup(self):
@@ -60,7 +56,7 @@ class SignLanguageBuilderApp(Gtk.Application):
 
         builder = Gtk.Builder()
         try:
-            builder.add_from_file(self.menu_ui_file)
+            builder.add_from_file(MENU_UI)
         except Exception as e:
             logger.exception(e)
             logger.error('menu file not found')
@@ -72,17 +68,17 @@ class SignLanguageBuilderApp(Gtk.Application):
         self.quit()
 
     def on_about(self, action, parameter):
-        about = Dif0sAboutDialog()
+        about = DifosAboutDialog(self.main_window)
         about.run()
 
 
-class SlBuilderMainWindow(Gtk.ApplicationWindow):
+class DifosMainWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
         Gtk.ApplicationWindow.__init__(self,
-                                       title='DebiY',
+                                       title=APP_TITLE,
                                        application=app)
-        self.set_default_size(300, 300)
-        self.set_icon_from_file(app.icon_file)
+        self.set_default_size(DEFAULT_WIN_SIZE_X, DEFAULT_WIN_SIZE_Y)
+        self.set_icon_from_file(ICON_FILE)
 
         export_action = Gio.SimpleAction.new('export', None)
         export_action.connect('activate', self.on_export)
@@ -91,7 +87,7 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
 
         builder = Gtk.Builder()
         try:
-            builder.add_from_file(app.sl_builder_window_file)
+            builder.add_from_file(MAIN_WIN_UI)
         except Exception as e:
             logger.exception(e)
             sys.exit()
@@ -106,6 +102,12 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
         builder.connect_signals(self)
 
     def on_export(self, action, parameter):
+        if self.hand_widget is not None and not self.hand_widget.is_valid:
+            display_error(self, 'Cannot export invalid hand')
+            return
+        if self.hand_widget is None or self.hand_widget.hand is None:
+            display_error(self, 'No Hand to export')
+            return
         save_dialog = Gtk.FileChooserDialog("Pick a file",
                                             self,
                                             Gtk.FileChooserAction.SAVE,
@@ -145,7 +147,6 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
         else:
             entry_style.add_class('hand_entry_error')
 
-
     def hand_to_file(self, filename, file_filter):
         file_type = None
         if file_filter is None:
@@ -165,10 +166,12 @@ class SlBuilderMainWindow(Gtk.ApplicationWindow):
         if not filename.lower().endswith('.' + file_type):
             filename += '.' + file_type
 
-        if self.hand_widget is None:
+        if self.hand_widget is None or self.hand_widget.hand is None:
             return
-        w, h = 300, 300
+        w, h = EXPORT_SIZE_X, EXPORT_SIZE_Y
         try:
+            logger.info('Exporting %s to %s'
+                        % (repr(self.hand_widget.hand), filename))
             surface = None
             if file_type == 'svg':
                 surface = cairo.SVGSurface(filename, w, h)
@@ -197,6 +200,7 @@ class HandWidget(Gtk.DrawingArea):
         self.hand_text = None
         self.height = self.get_allocated_height()
         self.width = self.get_allocated_width()
+        self.is_valid = True
 
     def do_draw(self, cr):
         if self.hand is not None:
@@ -221,13 +225,17 @@ class HandWidget(Gtk.DrawingArea):
                 self.hand = parse_hand(text)
                 logger.debug(('Parsed Hand (field: %s): ' % self.config_id)
                              + repr(self.hand))
-            except (InvalidPalmException, InvalidFingerException,
+            except (InvalidPalmException,
+                    InvalidFingerException,
+                    InvalidHandException,
                     ParseException) as e:
                 logger.debug(('(field %s)' % self.config_id) + str(e))
             self.queue_draw()
-        return (self.hand is not None
-                and self.hand.is_valid()
-                and is_hand_string(text))
+        self.is_valid = (len(text) == 0
+                 or (self.hand is not None
+                     and self.hand.is_valid()
+                     and is_hand_string(text)))
+        return self.is_valid
 
 
 def display_error(window, message, secondary_text=''):
@@ -241,18 +249,15 @@ def display_error(window, message, secondary_text=''):
         dialog.destroy()
 
 
-class Dif0sAboutDialog(Gtk.AboutDialog):
-    def __init__(self):
-        icon_file = os.path.join(os.path.dirname(__file__), 'icon.png')
-        icon = GdkPixbuf.Pixbuf.new_from_file_at_size(icon_file, 64, 64)
-        Gtk.AboutDialog.__init__(self)
-        self.set_title('About Dif0s Sign Language Builder')
-        self.set_name('Dif0s')
-        self.set_version('0.1a0dev')
-        self.set_comments('Dif0s models and creates diagrams of sign '
-                          + 'language transcripts')
-        self.set_authors(['Brenda Clark (concept)', 'Greg Clark (software)'])
-        self.set_logo(icon)
+class DifosAboutDialog(Gtk.AboutDialog):
+    def __init__(self, parent):
+        Gtk.AboutDialog.__init__(self, 'About', parent)
+        self.set_title(ABOUT_TITLE)
+        self.set_name(APP_TITLE)
+        self.set_version(DIFOS_VERSION)
+        self.set_comments(ABOUT_COMMENTS)
+        self.set_authors(AUTHORS)
+        self.set_logo(ICON)
 
         self.connect('response', self.on_response)
 
