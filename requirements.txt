@@ -1,3 +1,5 @@
-nose==1.3.7
-numpy==1.11.0
-pygobject==3.20.0
+pyparsing
+gi
+numpy<=1.11.0
+pygobject>=3.18
+pycairo>=1.10.0

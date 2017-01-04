@@ -6,7 +6,6 @@ import numpy as np
 import sys
 import os
 import logging
-from signlangmtk.util import setup_logging
 from signlangmtk.model import InvalidPalmException
 from signlangmtk.model import InvalidFingerException
 from signlangmtk.model import InvalidHandException

@@ -163,7 +163,7 @@ class FilledArc(Ellipse):
 
     def __eq__(self, other):
         if not super().__eq__(other):
-            return false
+            return False
         return ([self.start_radians, self.end_radians] == 
                 [other.start_radians, other.end_radians])
 

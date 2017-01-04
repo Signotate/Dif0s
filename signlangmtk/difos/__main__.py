@@ -7,7 +7,7 @@ from signlangmtk.util import setup_logging
 logger = logging.getLogger(__name__)
 
 
-def run_difos(log_level=logging.INFO):
+def main(log_level=logging.INFO):
     setup_logging(log_level)
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     gi.require_version('Gtk', '3.0')
@@ -20,4 +20,4 @@ def run_difos(log_level=logging.INFO):
 
 
 if __name__ == '__main__':
-    sys.exit(run_difos(log_level=logging.DEBUG))
+    sys.exit(main(log_level=logging.DEBUG))

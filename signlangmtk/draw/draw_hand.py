@@ -1,5 +1,3 @@
-import math
-import numpy as np
 import logging
 from signlangmtk.draw.palm_config import PalmConfigs
 from signlangmtk.draw.finger_config import FingerShapes
