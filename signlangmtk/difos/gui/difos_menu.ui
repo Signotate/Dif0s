@@ -18,4 +18,30 @@
       </item>
     </section>
   </menu>
+  <menu id="menu_bar">
+    <submenu>
+      <attribute name="label">File</attribute>
+        <section>
+          <item>
+            <attribute name="label">Export</attribute>
+            <attribute name="action">app.export</attribute>
+          </item>
+        </section>
+        <section>
+          <item>
+            <attribute name="label">Quit</attribute>
+            <attribute name="action">app.quit</attribute>
+          </item>
+        </section>
+    </submenu>
+    <submenu>
+      <attribute name="label">Help</attribute>
+      <section>
+        <item>
+          <attribute name="label">About</attribute>
+          <attribute name="action">app.about</attribute>
+        </item>
+      </section>
+    </submenu>
+  </menu>
 </interface>

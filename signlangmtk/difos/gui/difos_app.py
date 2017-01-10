@@ -59,9 +59,12 @@ class DifosApp(Gtk.Application):
         except Exception as e:
             logger.exception(e)
             logger.error('menu file not found')
-            sys.exit()
+            sys.exit(1)
         menu = builder.get_object("appmenu")
-        self.set_app_menu(menu)
+        menu_bar = builder.get_object("menu_bar")
+        if self.prefers_app_menu():
+            self.set_app_menu(menu)
+        self.set_menubar(menu_bar)
 
     def on_quit(self, action, parameter):
         self.quit()
