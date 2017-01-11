@@ -19,6 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from signlangmtk.model import Orientation
+from signlangmtk.model import InvalidPalmException
 from signlangmtk.draw.common import directed_angle
 from signlangmtk.draw.common import scale_matrix
 from signlangmtk.draw.common import rotation_matrix
@@ -99,10 +100,13 @@ class PalmConfigs:
         self._palm_configs = None
 
     def __call__(self, palm):
-        cfg = self.palm_configs[(palm.palm_dir, palm.finger_dir)]
-        if not palm.dominant:
-            cfg = self.mirror_palm_config(cfg)
-        return cfg
+        try:
+            cfg = self.palm_configs[(palm.palm_dir, palm.finger_dir)]
+            if not palm.dominant:
+                cfg = self.mirror_palm_config(cfg)
+            return cfg
+        except KeyError:
+            raise InvalidPalmException('Invalid Palm ' + str(palm))
 
     @property
     def palm_configs(self):

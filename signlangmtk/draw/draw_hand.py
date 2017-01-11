@@ -22,6 +22,7 @@ import logging
 from signlangmtk.draw.palm_config import PalmConfigs
 from signlangmtk.draw.finger_config import FingerShapes
 from signlangmtk.model.finger import InvalidFingerException
+from signlangmtk.model import InvalidPalmException
 from signlangmtk.draw.common import Line
 
 
@@ -34,8 +35,11 @@ finger_shapes = FingerShapes()
 
 def draw_palm(palm, ctx):
     logger.debug('Drawing Palm: ' + repr(palm))
-    for s in palm_cfg.shapes_for(palm):
-        s.draw(ctx)
+    try:
+        for s in palm_cfg.shapes_for(palm):
+            s.draw(ctx)
+    except InvalidPalmException as e:
+        logger.debug(str(e))
 
 
 def draw_orient_vectors(palm, ctx):
@@ -54,7 +58,11 @@ def draw_orient_vectors(palm, ctx):
 
 
 def draw_fingers(palm, fingers, ctx):
-    cfg = palm_cfg(palm)
+    try:
+        cfg = palm_cfg(palm)
+    except InvalidPalmException as e:
+        logger.debug(str(e))
+        return
     for f in fingers:
         logger.debug('Drawing Finger: ' + repr(f))
         try:
