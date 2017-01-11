@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=Dif0s
+GenericName=Sign Language Tool Kit Hand Diagram Generator
+Comment=Generate svg and png files
+Exec=difos
+Icon=difos.svg
+Terminal=False
+Category=Graphics

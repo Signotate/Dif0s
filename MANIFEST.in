@@ -1,0 +1,11 @@
+include signlangmtk/difos/gui/*.ui
+include signlangmtk/difos/gui/*.css
+include signlangmtk/difos/gui/*.png
+include signlangmtk/difos/gui/*.ico
+include signlangmtk/difos/gui/*.svg
+include requirements.txt
+include dif0s.desktop
+include README.*
+include LICENSE
+include NOTICE
+include ez_setup.py
