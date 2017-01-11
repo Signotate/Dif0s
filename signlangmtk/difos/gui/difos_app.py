@@ -14,6 +14,7 @@ from signlangmtk.parser import parse_hand
 from signlangmtk.parser import is_hand_string
 from signlangmtk.parser import ParseException
 from signlangmtk.difos.utils import *
+from signlangmtk.__about__ import *
 
 
 logger = logging.getLogger(__name__)
@@ -256,10 +257,17 @@ class DifosAboutDialog(Gtk.AboutDialog):
         Gtk.AboutDialog.__init__(self, 'About', parent)
         self.set_title(ABOUT_TITLE)
         self.set_name(APP_TITLE)
+        self.set_program_name(APP_TITLE)
         self.set_version(DIFOS_VERSION)
         self.set_comments(ABOUT_COMMENTS)
-        self.set_authors(AUTHORS)
         self.set_logo(ICON)
+        self.set_license(__notice__)
+        self.set_copyright(__copyright__)
+        self.set_website(__website__)
+        self.set_website_label('Website')
+
+        self.add_credit_section('Software', CREDITS_SOFTWARE)
+        self.add_credit_section('Concept', CREDITS_CONCEPT)
 
         self.connect('response', self.on_response)
 
