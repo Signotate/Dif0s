@@ -3,10 +3,10 @@
 
 ## Summary
 
-This tool kit provides a set of applications to model create and search sign
-language transcripts as described the [SiLOrB](https://bleegiimuus.wordpress.com/home/silorth-sign-language-orthography/) orthographic system developed by [Brenda Clark](https://bleegiimuus.wordpress.com/).  [SiLOrth](https://bleegiimuus.wordpress.com/home/silorth-sign-language-orthography/) is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+This tool kit provides a set of applications to model, create, and search sign
+language transcripts as described in the [SiLOrB](https://bleegiimuus.wordpress.com/home/silorb-sign-language-writing/) writing system developed by [Brenda Clark](https://bleegiimuus.wordpress.com/).  [SiLOrth](https://bleegiimuus.wordpress.com/home/silorth-sign-language-orthography/) is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
 
-This tool kit provides a text encoding, and a text based, human readable model for [SiLOrB](https://bleegiimuus.wordpress.com/home/silorb-sign-language-writing/) orthography.
+This tool kit provides a text encoding, and a text based, human readable model for the [SiLOrB](https://bleegiimuus.wordpress.com/home/silorb-sign-language-writing/) script.
 
 ## Dif0s 0.1a1.dev0
 
