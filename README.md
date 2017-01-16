@@ -4,9 +4,9 @@
 ## Summary
 
 This tool kit provides a set of applications to model create and search sign
-language transcripts as described the [SiLOrth](https://bleegiimuus.wordpress.com/home/silorth-sign-language-orthography/) orthographic system developed by [Brenda Clark](https://bleegiimuus.wordpress.com/).  [SiLOrth](https://bleegiimuus.wordpress.com/home/silorth-sign-language-orthography/) is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+language transcripts as described the [SiLOrB](https://bleegiimuus.wordpress.com/home/silorth-sign-language-orthography/) orthographic system developed by [Brenda Clark](https://bleegiimuus.wordpress.com/).  [SiLOrth](https://bleegiimuus.wordpress.com/home/silorth-sign-language-orthography/) is licensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
 
-This tool kit provides a text encoding, and a text based, human readable model for [SiLOrth](https://bleegiimuus.wordpress.com/home/silorth-sign-language-orthography/) orthography.
+This tool kit provides a text encoding, and a text based, human readable model for [SiLOrB](https://bleegiimuus.wordpress.com/home/silorb-sign-language-writing/) orthography.
 
 ## Dif0s 0.1a1.dev0
 
@@ -29,6 +29,6 @@ The software (source code, configuration files, etc) and model schemas in the Si
 Copyright &copy; 2016, 2017 Greg Clark
 
 ## Icons and images Licenses
-The Dif0s Icon is a dirivative work of the hand symbols descibed in [SiLOrth](https://bleegiimuus.wordpress.com/home/silorth-sign-language-orthography/) (&copy; 2017 Brenda Clark) which is licecensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.  The icon itself is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+The Dif0s Icon is a derivative work of the hand symbols descibed in [SiLOrB](https://bleegiimuus.wordpress.com/home/silorb-sign-language-writing/) (&copy; 2017 Brenda Clark) which is licecensed under <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.  The icon itself is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 
 Copyright &copy; 2017 Greg Clark and Brenda Clark
