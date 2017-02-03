@@ -1,5 +1,5 @@
 # Sign Language Markup Tool Kit
-#### Version: 0.1a1.dev0
+#### Version: 0.1a1
 
 ## Summary
 
@@ -8,7 +8,7 @@ language transcripts as described in the [SiLOrB](https://bleegiimuus.wordpress.
 
 This tool kit provides a text encoding, and a text based, human readable model for the [SiLOrB](https://bleegiimuus.wordpress.com/home/silorb-sign-language-writing/) script.
 
-## Dif0s 0.1a1.dev0
+## Dif0s 0.1a1
 
 This application provides a way to create and store sign language transcripts.
 The current version is a prototype hand SVG generator.
