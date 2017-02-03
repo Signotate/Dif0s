@@ -40,7 +40,7 @@ __long_summary__ = ('A collection of software to model, search, and create '
                     + 'transcripts')
 __uri__ = ''
 
-__version__ = '1.0a1.dev0'
+__version__ = '1.0a1'
 
 __author__ = 'Greg Clark'
 __email__ = 'greg@eigendomain.com'
@@ -69,5 +69,5 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 '''
 
-__website__ = 'www.somewebsite.com'
+__website__ = 'https://gitlab.com/eigenmoose/signlangmtk'
 
