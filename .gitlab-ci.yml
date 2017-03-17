@@ -7,15 +7,10 @@ before_script:
 
 stages:
   - build
-  - test
 
 build:
   stage: build
-  script: python3 setup.py sdist bdist_rpm
-
-test:
-  stage: test
-  script: python3 setup.py nosetests
-
-artifacts:
-  paths: dist/*
+  script: python3 setup.py build && python3 setup.py nosetests && python3 setup.py bdist_rpm sdist
+  artifacts:
+    paths:
+    - dist/
