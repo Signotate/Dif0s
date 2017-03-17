@@ -1,1 +1,13 @@
 image: "fedora"
+
+before_script:
+  - dnf -y update
+  - dnf -y install python3 rpm-build python3-nose
+  - dnf -y install atk gdk-pixbuf2 glib2 gobject-introspection gtk+ gtk3 pango python3-gobject python3-numpy python3-pyparsing
+
+stages:
+  - test
+
+build:
+  stage: test
+  script: python3 setup.py nosetests

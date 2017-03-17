@@ -18,10 +18,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-import ez_setup
-ez_setup.use_setuptools()
-
-
 from setuptools import setup
 from setuptools import find_packages
 from signlangmtk.__about__ import *
@@ -53,5 +49,6 @@ setup(
         ('share/applications', ['dif0s.desktop']),
         ('share/icons/hicolor/scalable/apps',
          ['signlangmtk/difos/gui/dif0s.svg'])
-    ]
+    ],
+    setup_requires=['setuptools', 'nose']
 )
