@@ -50,5 +50,5 @@ setup(
         ('share/icons/hicolor/scalable/apps',
          ['signlangmtk/difos/gui/dif0s.svg'])
     ],
-    setup_requires=['setuptools', 'nose']
+    setup_requires=['nose']
 )

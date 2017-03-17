@@ -3,11 +3,19 @@ image: "fedora"
 before_script:
   - dnf -y update
   - dnf -y install python3 rpm-build python3-nose
-  - dnf -y install atk gdk-pixbuf2 glib2 gobject-introspection gtk+ gtk3 pango python3-gobject python3-numpy python3-pyparsing
+  - dnf -y install atk gdk-pixbuf2 glib2 gobject-introspection gtk+ gtk3 pango python3-gobject python3-numpy python3-pyparsing python3-setuptools
 
 stages:
+  - build
   - test
 
 build:
+  stage: build
+  script: python3 setup.py sdist bdist_rpm
+
+test:
   stage: test
   script: python3 setup.py nosetests
+
+artifacts:
+  paths: dist/*
