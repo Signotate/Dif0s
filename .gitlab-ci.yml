@@ -1,0 +1,19 @@
+image: "fedora"
+
+before_script:
+  - dnf -y update
+  - dnf -y install python3 rpm-build python3-nose
+  - dnf -y install atk gdk-pixbuf2 glib2 gobject-introspection gtk+ gtk3 pango python3-gobject python3-numpy python3-pyparsing python3-setuptools
+
+stages:
+  - build
+
+build:
+  stage: build
+  script: python3 setup.py build && python3 setup.py nosetests && python3 setup.py bdist_rpm sdist
+  artifacts:
+    paths:
+    - dist/signlangmtk-1.0a1.tar.gz
+  only:
+    - master
+    - develop
