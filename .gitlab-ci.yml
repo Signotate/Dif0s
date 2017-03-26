@@ -13,4 +13,7 @@ build:
   script: python3 setup.py build && python3 setup.py nosetests && python3 setup.py bdist_rpm sdist
   artifacts:
     paths:
-    - dist/
+    - dist/signlangmtk-1.0a1.tar.gz
+  only:
+    - master
+    - develop
