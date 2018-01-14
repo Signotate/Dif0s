@@ -1,4 +1,4 @@
-# Sign Language Markup Tool Kit
+# Signotate
 #### Version: 0.1a1
 
 ## Summary
