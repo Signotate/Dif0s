@@ -15,7 +15,7 @@ The current version is a prototype hand SVG generator.
 
 ## Installation
 
-See installation guide [here](https://gitlab.com/eigenmoose/signlangmtk/wikis/Installation%20and%20Setup).
+See installation guide [here](https://github.com/Signotate/Dif0s/wiki/Installation%20and%20Setup).
 
 ## Documentation
 
