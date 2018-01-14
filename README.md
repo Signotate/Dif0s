@@ -19,7 +19,7 @@ See installation guide [here](https://gitlab.com/eigenmoose/signlangmtk/wikis/In
 
 ## Documentation
 
-See the documentation [here](https://gitlab.com/eigenmoose/signlangmtk/wikis/documentation).
+See the documentation [here](https://github.com/Signotate/Dif0s/wiki/Documentation).
 
 ## Software License
 
